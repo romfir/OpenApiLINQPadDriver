@@ -1,0 +1,204 @@
+﻿<Window x:Class="OpenApiLINQPadDriver.ConnectionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:enumObjectDataSources="clr-namespace:OpenApiLINQPadDriver.Wpf.EnumObjectDataSources"
+        xmlns:local="clr-namespace:OpenApiLINQPadDriver"
+        x:ClassModifier="internal"
+        mc:Ignorable="d"
+        Title="Open API Connection"
+        Icon="/OpenApiContextDriver;component/openapi.ico"
+        Background="{x:Static SystemColors.ControlBrush}"
+        Width="660" 
+        Height="310"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="True"
+        d:DataContext="{d:DesignInstance local:OpenApiContextDriverProperties, IsDesignTimeCreatable=False}"
+        FocusManager.FocusedElement="{Binding ElementName=OpenApiDocumentUri}"
+        >
+    <Window.Resources>
+        <ControlTemplate x:Key="ValidationErrorTemplate">
+            <StackPanel>
+                <Border BorderBrush="Red" BorderThickness="1">
+
+                    <!-- Placeholder for the DataGridTextColumn itself -->
+                    <AdornedElementPlaceholder x:Name="AdornedElement"  />
+                </Border>
+
+                <Border Background="White" 
+                        BorderBrush="Red" 
+                        Padding="4"
+                        BorderThickness="1,0,1,1" 
+                        HorizontalAlignment="Left">
+                    <ItemsControl ItemsSource="{Binding}" HorizontalAlignment="Left">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type ValidationError}">
+                                <TextBlock Text="{Binding ErrorContent}" Foreground="Red"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Border>
+            </StackPanel>
+        </ControlTemplate>
+        <Style x:Key="CheckBoxStackPanelStyle" TargetType="{x:Type StackPanel}">
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0 1 2 0"/>
+        </Style>
+        <Style x:Key="CloseDialogButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="5 0 0 0"/>
+            <Setter Property="Padding" Value="8 3"/>
+            <Setter Property="MinWidth" Value="85"/>
+        </Style>
+        <Style x:Key="WrappedTextBlock" TargetType="{x:Type TextBlock}">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style x:Key="TextBlockHyperlinkContainer" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource WrappedTextBlock}">
+            <Setter Property="Margin" Value="0 0 5 0"/>
+        </Style>
+        <Style x:Key="StyledHyperlink" TargetType="{x:Type Hyperlink}" BasedOn="{StaticResource {x:Type Hyperlink}}">
+            <!-- ReSharper disable once Xaml.BindingWithContextNotResolved -->
+            <Setter Property="ToolTip" Value="{Binding Command.ToolTip, RelativeSource={RelativeSource Self}}"/>
+        </Style>
+        <ObjectDataProvider x:Key="EndpointGroupingData"
+                            ObjectType="{x:Type enumObjectDataSources:EndpointGroupingSource}"
+                            MethodName="GetValues"/>
+
+        <ObjectDataProvider x:Key="JsonLibraryData"
+                            ObjectType="{x:Type enumObjectDataSources:JsonLibrarySource}"
+                            MethodName="GetValues"/>
+
+        <ObjectDataProvider x:Key="ClassStyleData"
+                            ObjectType="{x:Type enumObjectDataSources:ClassStyleSource}"
+                            MethodName="GetValues"/>
+
+        <Thickness x:Key="GroupControlMarginStyle" Left="0" Right="0" Top="2" Bottom="2"/>
+
+        <Style x:Key="EnumComboBoxStyle" TargetType="{x:Type ComboBox}">
+            <Setter Property="SelectedValuePath" Value="Item1"/>
+            <Setter Property="DisplayMemberPath" Value="Item2"/>
+            <Setter Property="MaxDropDownHeight" Value="Auto"/>
+        </Style>
+
+        <Style x:Key="GroupComboBoxStyle" TargetType="{x:Type ComboBox}" BasedOn="{StaticResource EnumComboBoxStyle}">
+            <Setter Property="Margin" Value="{StaticResource GroupControlMarginStyle}"/>
+        </Style>
+    </Window.Resources>
+
+    <StackPanel Margin="12">
+        
+        <DockPanel>
+            <WrapPanel Margin="0 0 0 2" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <Label Padding="0,0,0,2" Content="_Open Api Json Uri (swagger.json): " Target="{Binding ElementName=OpenApiDocumentUri}"/>
+                <TextBlock Style="{StaticResource WrappedTextBlock}">
+                    <TextBlock Style="{StaticResource TextBlockHyperlinkContainer}">
+                        <Hyperlink Name="GetOpenApiJsonHyperlink"
+                                   Style="{StaticResource StyledHyperlink}" 
+                                   TextDecorations=""
+                                   Click="GetOpenApiJsonHyperlink_OnClick"
+                                   >
+                            <Run Text="Get from disk" />
+                        </Hyperlink>
+                    </TextBlock>
+
+                </TextBlock>
+            </WrapPanel>
+        </DockPanel>
+        <TextBox Name="OpenApiDocumentUri" Padding="2" Margin="0,1,0,9" Text="{Binding OpenApiDocumentUri, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Delay=250}"
+                 Validation.ErrorTemplate="{DynamicResource ValidationErrorTemplate}"/>
+        <DockPanel>
+            <WrapPanel Margin="0 0 0 2" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <Label Padding="0,0,0,2" Content="_API Uri: " Target="{Binding ElementName=ApiUri}"/>
+                <TextBlock Style="{StaticResource WrappedTextBlock}">
+                    <TextBlock Style="{StaticResource TextBlockHyperlinkContainer}">
+                        <Hyperlink Name="DownloadApiUriHyperlink"
+                                   Style="{StaticResource StyledHyperlink}" 
+                                   TextDecorations=""
+                                   Click="DownloadApiUriHyperlink_OnClick" 
+                                   IsEnabled ="{Binding IsOpenApiDocumentUriValid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                            <Run Text="Get from swagger.json" />
+                        </Hyperlink>
+                    </TextBlock>
+        
+                </TextBlock>
+            </WrapPanel>
+        </DockPanel>
+        <TextBox Name="ApiUri" Padding="2" Margin="0,1,0,9" Text="{Binding ApiUri, ValidatesOnNotifyDataErrors=True, UpdateSourceTrigger=PropertyChanged, Delay=250}"
+                 Validation.ErrorTemplate="{DynamicResource ValidationErrorTemplate}"/>
+
+        <GroupBox Header="Client Generation">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="ComboBoxLabel"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!-- ReSharper disable once MarkupAttributeTypo -->
+                <Label Grid.Row="0" Grid.Column="0" Padding="0 6 4 0" Content="Endpoint _grouping" Target="{Binding ElementName=EndpointGroupingComboBox}"/>
+                <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"
+              Name="EndpointGroupingComboBox"
+              Style="{StaticResource GroupComboBoxStyle}"
+              ToolTip="Endpoint Grouping. Affects endpoint inside generated client(s)"
+              SelectedValue="{Binding EndpointGrouping}"
+              ItemsSource="{Binding Source={StaticResource EndpointGroupingData}}"/>
+
+                <Label Grid.Row="1" Grid.Column="0" Padding="0 6 4 0" Content="_Json library" Target="{Binding ElementName=JsonLibraryComboBox}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+              Name="JsonLibraryComboBox"
+              Style="{StaticResource GroupComboBoxStyle}"
+              ToolTip="Library used in generated client(s)"
+              SelectedValue="{Binding JsonLibrary}"
+              ItemsSource="{Binding Source={StaticResource JsonLibraryData}}"/>
+
+                <Label Grid.Row="2" Grid.Column="0" Padding="0 6 4 0" Content="Class _style" Target="{Binding ElementName=ClassStyleComboBox}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+              Name="ClassStyleComboBox"
+              Style="{StaticResource GroupComboBoxStyle}"
+              ToolTip="Generated class style"
+              SelectedValue="{Binding ClassStyle}"
+              ItemsSource="{Binding Source={StaticResource ClassStyleData}}"/>
+
+                <StackPanel Grid.Row="3" Grid.Column="0" Style="{StaticResource CheckBoxStackPanelStyle}">
+                    <CheckBox IsChecked="{Binding GenerateSyncMethods}" Content="Generate sync _methods" ToolTip="Generate synchronous methods"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="25*"></ColumnDefinition>
+                    <ColumnDefinition Width="24*"></ColumnDefinition>
+                    <ColumnDefinition Width="15*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <StackPanel Style="{StaticResource CheckBoxStackPanelStyle}">
+                    <CheckBox IsChecked="{Binding Persist}" Content="Remember this _connection" ToolTip="Connection will be available on next run"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Style="{StaticResource CheckBoxStackPanelStyle}">
+                    <CheckBox IsChecked="{Binding IsProduction}" Content="Contains _production data" ToolTip="Files contain production data"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="2" Style="{StaticResource CheckBoxStackPanelStyle}">
+                    <CheckBox IsChecked="{Binding DebugInfo}" Content="_Debug info" ToolTip="Show additional driver debug info"/>
+                </StackPanel>
+            </Grid>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Name="OkButton" Content="OK" Margin="1 0 0 0" Style="{StaticResource CloseDialogButtonStyle}" IsDefault="True" Click="BtnOK_OnClick" IsEnabled="{Binding HasNoErrors}"/>
+                <Button Content="Cancel" Style="{StaticResource CloseDialogButtonStyle}" IsCancel="True"/>
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</Window>
