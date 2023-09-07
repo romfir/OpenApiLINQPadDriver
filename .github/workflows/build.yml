@@ -1,0 +1,71 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+  release:
+    types:
+      - published
+
+env:
+  PACKAGE_NAME: OpenApiLINQPadDriver
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_NOLOGO: 1
+  SLN: OpenApiLINQPadDriver.sln
+  CONFIGURATION: Release
+  RETENTION_DAYS: 1
+  NUGET_DIRECTORY: ${{ github.workspace }}/nuget
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: |
+          6.x.x
+          7.x.x
+
+    - name: Restore dependencies
+      run: dotnet restore ${{ env.SLN }}
+
+    - name: ${{ env.SLN }} ${{ env.CONFIGURATION }} Build
+      run: dotnet build ${{ env.SLN }} --no-restore --configuration ${{ env.CONFIGURATION }} -p:GITHUB_ACTIONS=true
+
+    - name: Publish Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ env.PACKAGE_NAME }}
+        if-no-files-found: error
+        path: |
+          ${{ env.PACKAGE_NAME }}/bin/${{ env.CONFIGURATION }}/${{ env.PACKAGE_NAME }}.*.*nupkg
+        retention-days: ${{ env.RETENTION_DAYS }}
+
+  deploy:
+    if: github.event_name == 'release'
+    runs-on: windows-latest
+    needs: [ build ]
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          name: ${{ env.PACKAGE_NAME }}
+          path: ${{ env.NUGET_DIRECTORY }}
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+            dotnet-version: |
+                6.x.x
+                7.x.x
+
+      - name: Publish NuGet package
+        run: |
+          foreach($file in (Get-ChildItem "${{ env.NUGET_DIRECTORY }}" -Recurse -Include ${{ env.PACKAGE_NAME }}.*nupkg)) {
+              dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+          }

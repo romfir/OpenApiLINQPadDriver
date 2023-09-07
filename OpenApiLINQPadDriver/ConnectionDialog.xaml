@@ -8,7 +8,7 @@
         x:ClassModifier="internal"
         mc:Ignorable="d"
         Title="Open API Connection"
-        Icon="/OpenApiContextDriver;component/openapi.ico"
+        Icon="/OpenApiLINQPadDriver;component/openapi.ico"
         Background="{x:Static SystemColors.ControlBrush}"
         Width="660" 
         Height="310"
