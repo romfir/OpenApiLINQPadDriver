@@ -55,6 +55,7 @@ internal static class SchemaBuilder
             FilePathsToReference = openApiContextDriverProperties.GetCoreFxReferenceAssemblies()
                 .Append(typeof(JsonConvert).Assembly.Location)
                 .ToArray(),
+#pragma warning disable SYSLIB0044 //this is the only way to read this assembly, LINQPad does not give any other reference to it
             OutputPath = assemblyToBuild.CodeBase,
             SourceCode = new[] { codeGeneratedByNSwag, clientSourceCode }
         });
@@ -78,6 +79,7 @@ internal static class SchemaBuilder
         }
 
         var assemblyWithGeneratedCode = Assembly.LoadFile(assemblyToBuild.CodeBase!);
+#pragma warning restore SYSLIB0044
 
         MeasureTimeAndRestartStopWatch("Loading assembly from file");
 

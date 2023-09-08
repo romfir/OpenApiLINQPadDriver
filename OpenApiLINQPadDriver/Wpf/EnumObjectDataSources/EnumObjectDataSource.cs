@@ -3,10 +3,9 @@ using System.ComponentModel;
 using System.Linq;
 
 namespace OpenApiLINQPadDriver.Wpf.EnumObjectDataSources;
-
 internal abstract class EnumObjectDataSource<T> where T : Enum
 {
-    public Tuple<T, string>[] GetValues() =>
+    public static Tuple<T, string>[] GetValues() =>
         Enum.GetValues(typeof(T)).OfType<T>().Select(value =>
         {
             var valueAsString = value.ToString();
