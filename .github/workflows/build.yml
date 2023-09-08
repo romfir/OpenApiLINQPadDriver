@@ -69,6 +69,9 @@ jobs:
 
       - name: Publish NuGet package
         run: |
-          foreach($file in (Get-ChildItem "${{ env.NUGET_OUTPUT_DIRECTORY }}" -Recurse -Include ${{ env.PACKAGE_NAME }}*.nupkg)) {
-              dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-          }
+          for packageFile in "${{ env.NUGET_OUTPUT_DIRECTORY }}"/"${{ env.PACKAGE_NAME }}"*.nupkg
+          do
+            if [ -f "$packageFile" ]; then
+              dotnet nuget push "$packageFile" --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
+            fi
+          done
