@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using Microsoft.Win32;
+using OpenApiLINQPadDriver.Extensions;
 
 namespace OpenApiLINQPadDriver;
 
 /// <summary>
 /// Interaction logic for ConnectionDialog.xaml
 /// </summary>
-internal partial class ConnectionDialog : Window
+internal partial class ConnectionDialog
 {
     public ConnectionDialog(OpenApiContextDriverProperties openApiContextDriverProperties)
     {
@@ -51,7 +51,7 @@ internal partial class ConnectionDialog : Window
             if (result)
             {
                 ((OpenApiContextDriverProperties)DataContext).OpenApiDocumentUri = openFileDialog.FileName;
-                OpenApiDocumentUri.GetBindingExpression(TextBox.TextProperty)!.UpdateTarget();
+                OpenApiDocumentUri.UpdateText();
             }
         }
         finally
@@ -78,7 +78,8 @@ internal partial class ConnectionDialog : Window
             if (firstServerOrNull != null)
             {
                 dialogProperties.ApiUri = firstServerOrNull.Url;
-                ApiUri.GetBindingExpression(TextBox.TextProperty)!.UpdateTarget();
+
+                Dispatcher.Invoke(ApiUri.UpdateText);
             }
             else
             {
@@ -91,7 +92,7 @@ internal partial class ConnectionDialog : Window
         }
         finally
         {
-            hyperlink.IsEnabled = true;
+            Dispatcher.Invoke(() => hyperlink.IsEnabled = true);
         }
     }
 }
