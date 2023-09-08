@@ -7,10 +7,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiLINQPadDriver", "Ope
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug_Publish_To_LINQPad_Folder|Any CPU = Debug_Publish_To_LINQPad_Folder|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Debug_Publish_To_LINQPad_Folder|Any CPU.ActiveCfg = Debug_Publish_To_LINQPad_Folder|Any CPU
+		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Debug_Publish_To_LINQPad_Folder|Any CPU.Build.0 = Debug_Publish_To_LINQPad_Folder|Any CPU
 		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Release|Any CPU.ActiveCfg = Release|Any CPU

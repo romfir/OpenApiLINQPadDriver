@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks> 
-		<!--<TargetFramework>net6.0-windows</TargetFramework>-->
 		<Nullable>enable</Nullable>
 		<UseWpf>true</UseWpf>
 		<Deterministic>true</Deterministic>
 		<LangVersion>latest</LangVersion>
+		<Configurations>Debug;Release;Debug_Publish_To_LINQPad_Folder</Configurations>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug_Publish_To_LINQPad_Folder'">
+		<TargetFramework>net7.0-windows</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' != 'Debug_Publish_To_LINQPad_Folder'">
+		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -40,14 +47,12 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
 
-<!--uncomment for local development (and pick only one TargetFramework)-->
-	<!--<PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug_Publish_To_LINQPad_Folder'">
 		<OutputPath>$(localappdata)\LINQPad\Drivers\DataContext\NetCore\OpenApiLINQPadDriver</OutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-	</PropertyGroup>-->
+	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>

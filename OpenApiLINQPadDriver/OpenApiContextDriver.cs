@@ -8,15 +8,16 @@ using LINQPad.Extensibility.DataContext;
 namespace OpenApiLINQPadDriver;
 public class OpenApiContextDriver : DynamicDataContextDriver
 {
+#if DEBUG_PUBLISH_TO_LINQPAD_FOLDER
     public OpenApiContextDriver()
     {
-        // Uncomment the following code to attach to Visual Studio's debugger when an exception is thrown.
-        AppDomain.CurrentDomain.FirstChanceException += (sender, args) =>
+        AppDomain.CurrentDomain.FirstChanceException += (_, args) =>
         {
-            if (args.Exception.StackTrace?.Contains(typeof(OpenApiContextDriver).Namespace!) == true)
+            if (args.Exception.StackTrace?.Contains(nameof(OpenApiLINQPadDriver)) == true)
                 Debugger.Launch();
         };
     }
+#endif
 
     public override string GetConnectionDescription(IConnectionInfo cxInfo)
         => "OpenApi - " + new OpenApiContextDriverProperties(cxInfo).ApiUri;
