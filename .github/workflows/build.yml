@@ -17,7 +17,8 @@ env:
   SLN: OpenApiLINQPadDriver.sln
   CONFIGURATION: Release
   RETENTION_DAYS: 1
-  NUGET_DIRECTORY: ${{ github.workspace }}/nuget
+  NUGET_OUTPUT_DIRECTORY: ${{ github.workspace }}/nuget
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
   build:
@@ -30,7 +31,17 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
 
+    - name : Restore Cache
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.NUGET_PACKAGES }}
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+            ${{ runner.os }}-nuget-
+
     - name: Restore dependencies
+      if: steps.cache.outputs.cache-hit != 'true'
       run: dotnet restore ${{ env.SLN }}
 
     - name: ${{ env.SLN }} ${{ env.CONFIGURATION }} Build
@@ -53,13 +64,13 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: ${{ env.PACKAGE_NAME }}
-          path: ${{ env.NUGET_DIRECTORY }}
+          path: ${{ env.NUGET_OUTPUT_DIRECTORY }}
 
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v3
 
       - name: Publish NuGet package
         run: |
-          foreach($file in (Get-ChildItem "${{ env.NUGET_DIRECTORY }}" -Recurse -Include ${{ env.PACKAGE_NAME }}.nupkg)) {
+          foreach($file in (Get-ChildItem "${{ env.NUGET_OUTPUT_DIRECTORY }}" -Recurse -Include ${{ env.PACKAGE_NAME }}.nupkg)) {
               dotnet nuget push $file --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
           }
