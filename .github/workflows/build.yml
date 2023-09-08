@@ -18,7 +18,6 @@ env:
   CONFIGURATION: Release
   RETENTION_DAYS: 1
   NUGET_OUTPUT_DIRECTORY: ${{ github.workspace }}/nuget
-  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
 
 jobs:
   build:
@@ -35,14 +34,13 @@ jobs:
       id: cache
       uses: actions/cache@v3
       with:
-        path: ${{ env.NUGET_PACKAGES }}
+        path: ~/.nuget/packages
         key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
         restore-keys: |
             ${{ runner.os }}-nuget-
 
     - name: Restore dependencies
-      if: steps.cache.outputs.cache-hit != 'true'
-      run: dotnet restore ${{ env.SLN }}
+      run: dotnet restore ${{ env.SLN }} --locked-mode
 
     - name: ${{ env.SLN }} ${{ env.CONFIGURATION }} Build
       run: dotnet build ${{ env.SLN }} --no-restore --configuration ${{ env.CONFIGURATION }} -p:GITHUB_ACTIONS=true
