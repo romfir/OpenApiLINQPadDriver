@@ -1,6 +1,6 @@
 ﻿using OpenApiLINQPadDriver.Enums;
 
 namespace OpenApiLINQPadDriver.Wpf.EnumObjectDataSources;
-internal class JsonLibrarySource : EnumObjectDataSource<JsonLibrary>
+internal sealed class JsonLibrarySource : EnumObjectDataSource<JsonLibrary>
 {
 }
