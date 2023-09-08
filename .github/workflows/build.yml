@@ -3,7 +3,7 @@ name: Build
 on:
   workflow_dispatch:
   push:
-      tags-ignore:
+    branches: #This workflow is only triggered when commits are pushed. Pushing tags won't trigger it.
       - '**'
   pull_request:
   release:
