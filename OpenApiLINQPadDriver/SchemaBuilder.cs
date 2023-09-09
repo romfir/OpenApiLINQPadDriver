@@ -22,7 +22,12 @@ internal static class SchemaBuilder
     {
         typeName = TypedDataContextName;
         var timeExplorerItem = CreateExplorerItemForTimeMeasurement();
+
+#if NET7_0_OR_GREATER
         var initialTimeStamp = Stopwatch.GetTimestamp();
+#else
+        var stopWatch = Stopwatch.StartNew();
+#endif
 
         var document = AsyncHelper.RunSync(() => OpenApiDocumentHelper.GetFromUriAsync(new Uri(openApiContextDriverProperties.OpenApiDocumentUri!)));
 
@@ -131,10 +136,15 @@ internal static class SchemaBuilder
 
         void MeasureTimeAndAddTimeExecutionExplorerItem(string name)
         {
+#if NET7_0_OR_GREATER
             var temp = initialTimeStamp;
             initialTimeStamp = Stopwatch.GetTimestamp();
-
-            timeExplorerItem.Children.Add(new ExplorerItem(name + " " + Stopwatch.GetElapsedTime(temp, initialTimeStamp), ExplorerItemKind.Property, ExplorerIcon.Blank));
+            var elapsed = Stopwatch.GetElapsedTime(temp, initialTimeStamp);
+#else
+            var elapsed = stopWatch.Elapsed;
+            stopWatch.Restart();
+#endif
+            timeExplorerItem.Children.Add(new ExplorerItem(name + " " + elapsed, ExplorerItemKind.Property, ExplorerIcon.Blank));
         }
 
         static List<ExplorerItem> CreateExplorerItemsWithGeneratedCode(string codeGeneratedByNSwag, string clientSourceCode)
