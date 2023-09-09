@@ -21,13 +21,12 @@ internal static class SchemaBuilder
         ref string typeName)
     {
         typeName = TypedDataContextName;
-
         var timeExplorerItem = CreateExplorerItemForTimeMeasurement();
-        var stopWatch = Stopwatch.StartNew();
+        var initialTimeStamp = Stopwatch.GetTimestamp();
 
         var document = AsyncHelper.RunSync(() => OpenApiDocumentHelper.GetFromUriAsync(new Uri(openApiContextDriverProperties.OpenApiDocumentUri!)));
 
-        MeasureTimeAndRestartStopWatch("Downloading document");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Downloading document");
 
         document.SetServer(openApiContextDriverProperties.ApiUri!);
 
@@ -39,7 +38,7 @@ internal static class SchemaBuilder
 
         var codeGeneratedByNSwag = generator.GenerateFile();
 
-        MeasureTimeAndRestartStopWatch("Generating NSwag classes");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Generating NSwag classes");
 
         var clientSourceCode = endpointGrouping switch
         {
@@ -48,7 +47,7 @@ internal static class SchemaBuilder
             _ => throw new InvalidOperationException()
         };
 
-        MeasureTimeAndRestartStopWatch("Generating clients partials");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Generating clients partials");
 
         var compileResult = DataContextDriver.CompileSource(new CompilationInput
         {
@@ -60,7 +59,7 @@ internal static class SchemaBuilder
             SourceCode = new[] { codeGeneratedByNSwag, clientSourceCode }
         });
 
-        MeasureTimeAndRestartStopWatch("Compiling code");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Compiling code");
 
         var explorerItems = new List<ExplorerItem>();
 
@@ -81,13 +80,13 @@ internal static class SchemaBuilder
         var assemblyWithGeneratedCode = Assembly.LoadFile(assemblyToBuild.CodeBase!);
 #pragma warning restore SYSLIB0044
 
-        MeasureTimeAndRestartStopWatch("Loading assembly from file");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Loading assembly from file");
 
         var contextType = assemblyWithGeneratedCode.GetType(nameSpace, TypedDataContextName);
 
         explorerItems.AddRange(ReflectionSchemaBuilder.GenerateExplorerItems(contextType, endpointGrouping));
 
-        MeasureTimeAndRestartStopWatch("Reading assembly using reflection and generating schema");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Reading assembly using reflection and generating schema");
 
         return explorerItems;
 
@@ -130,10 +129,12 @@ internal static class SchemaBuilder
                 Children = new List<ExplorerItem>()
             };
 
-        void MeasureTimeAndRestartStopWatch(string name)
+        void MeasureTimeAndAddTimeExecutionExplorerItem(string name)
         {
-            timeExplorerItem.Children.Add(new ExplorerItem(name + " " + stopWatch.Elapsed, ExplorerItemKind.Property, ExplorerIcon.Blank));
-            stopWatch.Restart();
+            var temp = initialTimeStamp;
+            initialTimeStamp = Stopwatch.GetTimestamp();
+
+            timeExplorerItem.Children.Add(new ExplorerItem(name + " " + Stopwatch.GetElapsedTime(temp, initialTimeStamp), ExplorerItemKind.Property, ExplorerIcon.Blank));
         }
 
         static List<ExplorerItem> CreateExplorerItemsWithGeneratedCode(string codeGeneratedByNSwag, string clientSourceCode)
