@@ -96,12 +96,6 @@ public class OpenApiContextDriverProperties : BaseViewModel
     private bool GetValue(bool defaultValue, [CallerMemberName] string callerMemberName = "") =>
         GetValue(static v => v.ToBoolSafe(), defaultValue, callerMemberName)!.Value;
 
-    //private int GetValue(int defaultValue, Func<int, int> adjustValueFunc, [CallerMemberName] string callerMemberName = "") =>
-    //    adjustValueFunc(GetValue(static v => v.ToIntSafe(), defaultValue, callerMemberName)!.Value);
-
-    //private string? GetValue(string defaultValue, [CallerMemberName] string callerMemberName = "") =>
-    //    GetValue(static v => v, defaultValue, callerMemberName);
-
     private string? GetValue(string defaultValue, [CallerMemberName] string callerMemberName = "") =>
         GetValue(static v => v, defaultValue, callerMemberName);
 

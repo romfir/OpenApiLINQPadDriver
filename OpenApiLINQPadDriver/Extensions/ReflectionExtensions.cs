@@ -12,11 +12,7 @@ internal static class ReflectionExtensions
         var type = obj.GetType();
 
         var propertyType = type.GetProperty(propertyName, bindingFlags)?.DeclaringType;
-        var property = propertyType?.GetProperty(propertyName, bindingFlags);
-
-        if (property == null)
-            throw new InvalidOperationException(
-                $"Cannot find property '{propertyName}' in object of type {typeof(T)}");
+        var property = propertyType?.GetProperty(propertyName, bindingFlags) ?? throw new InvalidOperationException($"Cannot find property '{propertyName}' in object of type {typeof(T)}");
 
         if (!property.CanWrite)
         {
@@ -32,10 +28,7 @@ internal static class ReflectionExtensions
     {
         var type = obj.GetType();
 
-        var field = type.GetField(fieldName, bindingFlags);
-
-        if (field == null)
-            throw new InvalidOperationException($"Cannot find field '{fieldName}' in object of type {typeof(T)}");
+        var field = type.GetField(fieldName, bindingFlags) ?? throw new InvalidOperationException($"Cannot find field '{fieldName}' in object of type {typeof(T)}");
 
         field.SetValue(obj, value);
     }
