@@ -141,10 +141,10 @@ private void PrepareRequest(HttpClient httpClient, HttpRequestMessage requestMes
 
 ### Development ###
 * [OpenApiLINQPadDriver.csproj](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj) contains special `Debug_Publish_To_LINQPad_Folder` debug build configuration, if it is chosen, code will be build only targeting `net7.0-windows` with additional properties:
-https://github.com/romfir/OpenApiLINQPadDriver/blob/0ce72bb692b39088360613123b08cdf8a51ec506/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj#L50-L56
-  * LINQPad can pick drivers from `\LINQPad\Drivers\DataContext\NetCore` folder
-  * Additionaly when exceptions will be thrown it will be possible to attach a debugger:
-https://github.com/romfir/OpenApiLINQPadDriver/blob/0ce72bb692b39088360613123b08cdf8a51ec506/OpenApiLINQPadDriver/OpenApiContextDriver.cs#L11-L20
+https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj#L50-L56
+* LINQPad can pick drivers from `\LINQPad\Drivers\DataContext\NetCore` folder
+* Additionaly when exceptions will be thrown it will be possible to attach a debugger:
+https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiContextDriver.cs#L11-L20
 
 ### Roadmap ###
 * Allow injection of own httpClient
