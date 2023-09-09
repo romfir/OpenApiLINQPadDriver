@@ -49,7 +49,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug_Publish_To_LINQPad_Folder'">
-		<OutputPath>$(localappdata)\LINQPad\Drivers\DataContext\NetCore\OpenApiLINQPadDriver</OutputPath>
+		<OutputPath>$(localappdata)\LINQPad\Drivers\DataContext\NetCore\$(AssemblyName)</OutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
