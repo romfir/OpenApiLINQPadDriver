@@ -126,6 +126,19 @@ private void PrepareRequest(HttpClient httpClient, HttpRequestMessage requestMes
 ### Known Issues ###
 * Code does not compile when there are parameters with the same name, but with case differences in the single endpoint and they come from different locations eg `[FromQuery] int test, [FromHeader] int Test` [related issue](https://github.com/RicoSuter/NSwag/issues/2560)
 
+## Credits ##
+
+### Tools ###
+
+* [LINQPad 7](https://www.linqpad.net/LINQPad7.aspx)
+* [LINQPad Command-Line and Scripting (LPRun)](https://www.linqpad.net/lprun.aspx)
+
+### Libraries ###
+
+* [NJsonSchema](https://github.com/RicoSuter/NJsonSchema)
+* [NSwag](https://github.com/RicoSuter/NSwag)
+* [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) - required by NSwag, included to bump version
+
 ### Development ###
 * [OpenApiLINQPadDriver.csproj](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj) contains special `Debug_Publish_To_LINQPad_Folder` debug build configuration, if it is chosen, code will be build only targeting `net7.0-windows` with additional properties:
 https://github.com/romfir/OpenApiLINQPadDriver/blob/0ce72bb692b39088360613123b08cdf8a51ec506/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj#L50-L56
@@ -147,3 +160,5 @@ https://github.com/romfir/OpenApiLINQPadDriver/blob/0ce72bb692b39088360613123b08
 * When multiple servers are found allow selection
 * LINQPad 5 support
 * Examples (include in the nuget)
+* Expose JsonSerializerSettings setter on multi client setup
+* Expose ReadResponseAsString on multi client setup

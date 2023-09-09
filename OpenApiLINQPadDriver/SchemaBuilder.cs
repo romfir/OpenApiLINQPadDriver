@@ -53,7 +53,7 @@ internal static class SchemaBuilder
         var compileResult = DataContextDriver.CompileSource(new CompilationInput
         {
             FilePathsToReference = openApiContextDriverProperties.GetCoreFxReferenceAssemblies()
-                .Append(typeof(JsonConvert).Assembly.Location)
+                .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use lowest possible version 10.0.1
                 .ToArray(),
 #pragma warning disable SYSLIB0044 //this is the only way to read this assembly, LINQPad does not give any other reference to it
             OutputPath = assemblyToBuild.CodeBase,
@@ -125,7 +125,7 @@ internal static class SchemaBuilder
         }
 
         ExplorerItem CreateExplorerItemForTimeMeasurement()
-            => new("Times", ExplorerItemKind.Schema, ExplorerIcon.Box)
+            => new("Execution Times", ExplorerItemKind.Schema, ExplorerIcon.Box)
             {
                 Children = new List<ExplorerItem>()
             };
