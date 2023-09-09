@@ -21,13 +21,17 @@ internal static class SchemaBuilder
         ref string typeName)
     {
         typeName = TypedDataContextName;
-
         var timeExplorerItem = CreateExplorerItemForTimeMeasurement();
+
+#if NET7_0_OR_GREATER
+        var initialTimeStamp = Stopwatch.GetTimestamp();
+#else
         var stopWatch = Stopwatch.StartNew();
+#endif
 
         var document = AsyncHelper.RunSync(() => OpenApiDocumentHelper.GetFromUriAsync(new Uri(openApiContextDriverProperties.OpenApiDocumentUri!)));
 
-        MeasureTimeAndRestartStopWatch("Downloading document");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Downloading document");
 
         document.SetServer(openApiContextDriverProperties.ApiUri!);
 
@@ -39,7 +43,7 @@ internal static class SchemaBuilder
 
         var codeGeneratedByNSwag = generator.GenerateFile();
 
-        MeasureTimeAndRestartStopWatch("Generating NSwag classes");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Generating NSwag classes");
 
         var clientSourceCode = endpointGrouping switch
         {
@@ -48,19 +52,19 @@ internal static class SchemaBuilder
             _ => throw new InvalidOperationException()
         };
 
-        MeasureTimeAndRestartStopWatch("Generating clients partials");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Generating clients partials");
 
         var compileResult = DataContextDriver.CompileSource(new CompilationInput
         {
             FilePathsToReference = openApiContextDriverProperties.GetCoreFxReferenceAssemblies()
-                .Append(typeof(JsonConvert).Assembly.Location)
+                .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use lowest possible version 10.0.1
                 .ToArray(),
 #pragma warning disable SYSLIB0044 //this is the only way to read this assembly, LINQPad does not give any other reference to it
             OutputPath = assemblyToBuild.CodeBase,
             SourceCode = new[] { codeGeneratedByNSwag, clientSourceCode }
         });
 
-        MeasureTimeAndRestartStopWatch("Compiling code");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Compiling code");
 
         var explorerItems = new List<ExplorerItem>();
 
@@ -81,13 +85,13 @@ internal static class SchemaBuilder
         var assemblyWithGeneratedCode = Assembly.LoadFile(assemblyToBuild.CodeBase!);
 #pragma warning restore SYSLIB0044
 
-        MeasureTimeAndRestartStopWatch("Loading assembly from file");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Loading assembly from file");
 
         var contextType = assemblyWithGeneratedCode.GetType(nameSpace, TypedDataContextName);
 
         explorerItems.AddRange(ReflectionSchemaBuilder.GenerateExplorerItems(contextType, endpointGrouping));
 
-        MeasureTimeAndRestartStopWatch("Reading assembly using reflection and generating schema");
+        MeasureTimeAndAddTimeExecutionExplorerItem("Reading assembly using reflection and generating schema");
 
         return explorerItems;
 
@@ -125,15 +129,22 @@ internal static class SchemaBuilder
         }
 
         ExplorerItem CreateExplorerItemForTimeMeasurement()
-            => new("Times", ExplorerItemKind.Schema, ExplorerIcon.Box)
+            => new("Execution Times", ExplorerItemKind.Schema, ExplorerIcon.Box)
             {
                 Children = new List<ExplorerItem>()
             };
 
-        void MeasureTimeAndRestartStopWatch(string name)
+        void MeasureTimeAndAddTimeExecutionExplorerItem(string name)
         {
-            timeExplorerItem.Children.Add(new ExplorerItem(name + " " + stopWatch.Elapsed, ExplorerItemKind.Property, ExplorerIcon.Blank));
+#if NET7_0_OR_GREATER
+            var temp = initialTimeStamp;
+            initialTimeStamp = Stopwatch.GetTimestamp();
+            var elapsed = Stopwatch.GetElapsedTime(temp, initialTimeStamp);
+#else
+            var elapsed = stopWatch.Elapsed;
             stopWatch.Restart();
+#endif
+            timeExplorerItem.Children.Add(new ExplorerItem(name + " " + elapsed, ExplorerItemKind.Property, ExplorerIcon.Blank));
         }
 
         static List<ExplorerItem> CreateExplorerItemsWithGeneratedCode(string codeGeneratedByNSwag, string clientSourceCode)
