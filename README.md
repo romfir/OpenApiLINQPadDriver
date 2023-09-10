@@ -141,11 +141,9 @@ private void PrepareRequest(HttpClient httpClient, HttpRequestMessage requestMes
 * [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) - required by NSwag, included to bump version
 
 ### Development ###
-* [OpenApiLINQPadDriver.csproj](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj) contains special `Debug_Publish_To_LINQPad_Folder` debug build configuration, if it is chosen, code will be build only targeting `net7.0-windows` with additional properties:
-https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj#L50-L56
+* [OpenApiLINQPadDriver.csproj](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj) contains special `Debug_Publish_To_LINQPad_Folder` debug build configuration, if it is chosen, code will be build only targeting `net7.0-windows` with [additional properties](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj?plain=1#L52-L57)
 * LINQPad can pick drivers from `\LINQPad\Drivers\DataContext\NetCore` folder
-* Additionaly when exceptions will be thrown it will be possible to attach a debugger:
-https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiContextDriver.cs#L11-L20
+* [Additionaly when exceptions will be thrown it will be possible to attach a debugger](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiContextDriver.cs?plain=1#L12-L21)
 
 ### Roadmap ###
 * Allow injection of own httpClient
