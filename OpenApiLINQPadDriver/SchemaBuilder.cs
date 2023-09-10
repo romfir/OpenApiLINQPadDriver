@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using NJsonSchema.CodeGeneration.CSharp;
 using NSwag.CodeGeneration.CSharp;
 using NSwag.CodeGeneration.OperationNameGenerators;
+using OpenApiLINQPadDriver.Compilation;
 using OpenApiLINQPadDriver.Enums;
 using OpenApiLINQPadDriver.Extensions;
 
@@ -21,7 +22,8 @@ internal static class SchemaBuilder
         ref string typeName)
     {
         typeName = TypedDataContextName;
-        var timeExplorerItem = CreateExplorerItemForTimeMeasurement();
+        var mainContextType = new TypeDescriptor(typeName, nameSpace);
+        var timeExplorerItem = ExplorerItemHelper.CreateForTimeMeasurement();
 
 #if NET7_0_OR_GREATER
         var initialTimeStamp = Stopwatch.GetTimestamp();
@@ -29,7 +31,7 @@ internal static class SchemaBuilder
         var stopWatch = Stopwatch.StartNew();
 #endif
 
-        var document = AsyncHelper.RunSync(() => OpenApiDocumentHelper.GetFromUriAsync(new Uri(openApiContextDriverProperties.OpenApiDocumentUri!)));
+        var document = OpenApiDocumentHelper.GetFromUri(new Uri(openApiContextDriverProperties.OpenApiDocumentUri!));
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Downloading document");
 
@@ -37,7 +39,7 @@ internal static class SchemaBuilder
 
         var endpointGrouping = openApiContextDriverProperties.EndpointGrouping;
         var settings = CreateCsharpClientGeneratorSettings(endpointGrouping, openApiContextDriverProperties.JsonLibrary, openApiContextDriverProperties.ClassStyle,
-            openApiContextDriverProperties.GenerateSyncMethods, nameSpace, typeName);
+            openApiContextDriverProperties.GenerateSyncMethods, mainContextType);
 
         var generator = new CSharpClientGenerator(document, settings);
 
@@ -47,47 +49,56 @@ internal static class SchemaBuilder
 
         var clientSourceCode = endpointGrouping switch
         {
-            EndpointGrouping.SingleClientFromOperationIdOperationName => ClientGenerator.SingleClientFromOperationIdOperationNameGenerator(nameSpace, typeName),
-            EndpointGrouping.MultipleClientsFromFirstTagAndOperationName => ClientGenerator.MultipleClientsFromOperationIdOperationNameGenerator(GetClientNames(), nameSpace, typeName),
+            EndpointGrouping.SingleClientFromOperationIdOperationName => ClientGenerator.SingleClientFromOperationIdOperationNameGenerator(mainContextType),
+            EndpointGrouping.MultipleClientsFromFirstTagAndOperationName => ClientGenerator.MultipleClientsFromOperationIdOperationNameGenerator(GetClientNames(), mainContextType),
             _ => throw new InvalidOperationException()
         };
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Generating clients partials");
 
-        var compileResult = DataContextDriver.CompileSource(new CompilationInput
-        {
-            FilePathsToReference = openApiContextDriverProperties.GetCoreFxReferenceAssemblies()
-                .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use lowest possible version 10.0.1
-                .ToArray(),
+        var references = openApiContextDriverProperties.GetCoreFxReferenceAssemblies()
+            .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use lowest possible version 10.0.1
+            .ToArray();
+
 #pragma warning disable SYSLIB0044 //this is the only way to read this assembly, LINQPad does not give any other reference to it
-            OutputPath = assemblyToBuild.CodeBase,
+        var assemblyPath = assemblyToBuild.CodeBase!;
+#pragma warning restore SYSLIB0044
+
+        var compileResult = RoslynHelper.CompileSource(new CompilationInput
+        {
+            FilePathsToReference = references,
+            OutputPath = assemblyPath,
             SourceCode = new[] { codeGeneratedByNSwag, clientSourceCode }
-        });
+        }, openApiContextDriverProperties.BuildInRelease);
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Compiling code");
 
         var explorerItems = new List<ExplorerItem>();
 
         if (openApiContextDriverProperties.DebugInfo)
+        {
             explorerItems.Add(timeExplorerItem);
 
-        if (compileResult.Errors.Any() || openApiContextDriverProperties.DebugInfo)
-        {
-            explorerItems.AddRange(CreateExplorerItemsWithGeneratedCode(codeGeneratedByNSwag, clientSourceCode));
+            if (compileResult.Warnings.Any())
+            {
+                explorerItems.Add(ExplorerItemHelper.CreateForCompilationWarnings(compileResult.Warnings));
+            }
         }
+
+        if (compileResult.Errors.Any() || openApiContextDriverProperties.DebugInfo)
+            explorerItems.AddRange(ExplorerItemHelper.CreateForGeneratedCode(codeGeneratedByNSwag, clientSourceCode));
 
         if (compileResult.Errors.Any())
         {
-            explorerItems.Add(GenerateErrorExplorerItem(compileResult.Errors));
+            explorerItems.Add(ExplorerItemHelper.CreateForCompilationErrors(compileResult.Errors));
             return explorerItems;
         }
 
-        var assemblyWithGeneratedCode = Assembly.LoadFile(assemblyToBuild.CodeBase!);
-#pragma warning restore SYSLIB0044
+        var assemblyWithGeneratedCode = DataContextDriver.LoadAssemblySafely(assemblyPath);
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Loading assembly from file");
 
-        var contextType = assemblyWithGeneratedCode.GetType(nameSpace, TypedDataContextName);
+        var contextType = assemblyWithGeneratedCode.GetType(mainContextType);
 
         explorerItems.AddRange(ReflectionSchemaBuilder.GenerateExplorerItems(contextType, endpointGrouping));
 
@@ -109,31 +120,6 @@ internal static class SchemaBuilder
                 .ToList();
         }
 
-        static ExplorerItem GenerateErrorExplorerItem(IReadOnlyCollection<string> errors)
-        {
-            var errorExplorerItem = new ExplorerItem("Compile errors", ExplorerItemKind.Schema, ExplorerIcon.LinkedDatabase)
-            {
-                Children = new List<ExplorerItem>(errors.Count)
-            };
-
-            foreach (var error in errors)
-            {
-                errorExplorerItem.Children.Add(new ExplorerItem(error, ExplorerItemKind.Schema, ExplorerIcon.Inherited)
-                {
-                    DragText = error,
-                    ToolTipText = error
-                });
-            }
-
-            return errorExplorerItem;
-        }
-
-        ExplorerItem CreateExplorerItemForTimeMeasurement()
-            => new("Execution Times", ExplorerItemKind.Schema, ExplorerIcon.Box)
-            {
-                Children = new List<ExplorerItem>()
-            };
-
         void MeasureTimeAndAddTimeExecutionExplorerItem(string name)
         {
 #if NET7_0_OR_GREATER
@@ -144,32 +130,17 @@ internal static class SchemaBuilder
             var elapsed = stopWatch.Elapsed;
             stopWatch.Restart();
 #endif
-            timeExplorerItem.Children.Add(new ExplorerItem(name + " " + elapsed, ExplorerItemKind.Property, ExplorerIcon.Blank));
+            timeExplorerItem.Children.Add(ExplorerItemHelper.CreateForElapsedTime(name, elapsed));
         }
-
-        static List<ExplorerItem> CreateExplorerItemsWithGeneratedCode(string codeGeneratedByNSwag, string clientSourceCode)
-            => new()
-            {
-                new("NSwag generated source code", ExplorerItemKind.Schema, ExplorerIcon.Schema)
-                {
-                    ToolTipText = "Drag and drop context generated source code to text window",
-                    DragText = codeGeneratedByNSwag
-                },
-                new("Client source code", ExplorerItemKind.Schema, ExplorerIcon.Schema)
-                {
-                    ToolTipText = "Drag and drop context source code to text window client",
-                    DragText = clientSourceCode
-                }
-            };
     }
 
     private static CSharpClientGeneratorSettings CreateCsharpClientGeneratorSettings(EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle, bool generateSyncMethods,
-        string nameSpace, string linqPadTypeName)
+        TypeDescriptor type)
     {
         var (operationNameGenerator, className) = endpointGrouping switch
         {
             EndpointGrouping.MultipleClientsFromFirstTagAndOperationName => ((IOperationNameGenerator)new MultipleClientsFromFirstTagAndOperationNameGenerator(), "{controller}" + ClientPostFix),
-            EndpointGrouping.SingleClientFromOperationIdOperationName => (new SingleClientFromOperationIdOperationNameGenerator(), linqPadTypeName),
+            EndpointGrouping.SingleClientFromOperationIdOperationName => (new SingleClientFromOperationIdOperationNameGenerator(), type.Name),
             _ => throw new InvalidOperationException()
         };
 
@@ -181,14 +152,14 @@ internal static class SchemaBuilder
             OperationNameGenerator = operationNameGenerator,
             CSharpGeneratorSettings =
             {
-                Namespace = nameSpace,
+                Namespace = type.NameSpace,
                 JsonLibrary = (CSharpJsonLibrary)jsonLibrary,
                 ClassStyle = (CSharpClassStyle)classStyle,
             },
             UseHttpClientCreationMethod = false,
             DisposeHttpClient = true,
             GenerateSyncMethods = generateSyncMethods,
-            GeneratePrepareRequestAndProcessResponseAsAsyncMethods = false
+            GeneratePrepareRequestAndProcessResponseAsAsyncMethods = false,
         };
         return settings;
     }

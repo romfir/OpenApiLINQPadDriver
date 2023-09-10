@@ -59,6 +59,7 @@ internal partial class ConnectionDialog
             hyperlink.IsEnabled = true;
         }
     }
+
     private async void DownloadApiUriHyperlink_OnClick(object sender, RoutedEventArgs e)
     {
         var hyperlink = (Hyperlink)sender;

@@ -4,20 +4,20 @@ using System.Linq;
 using static OpenApiLINQPadDriver.ParameterDescriptors;
 namespace OpenApiLINQPadDriver;
 
-public static class ClientGenerator
+internal static class ClientGenerator
 {
     public const string PrepareRequestFunctionName = "PrepareRequestFunction";
 
-    public static string SingleClientFromOperationIdOperationNameGenerator(string nameSpace, string typeName)
-        => GetClientPartial(nameSpace, typeName);
+    public static string SingleClientFromOperationIdOperationNameGenerator(TypeDescriptor type)
+        => GetClientPartial(type.NameSpace, type.Name);
 
-    public static string MultipleClientsFromOperationIdOperationNameGenerator(ICollection<string> clientTypeNames, string nameSpace, string typeName)
+    public static string MultipleClientsFromOperationIdOperationNameGenerator(ICollection<string> clientTypeNames, TypeDescriptor type)
     {
         return $@"
 
-namespace {nameSpace}
+namespace {type.NameSpace}
 {{
-    public partial class {typeName}
+    public partial class {type.Name}
     {{
 {GenerateFields()}
 
@@ -33,14 +33,14 @@ namespace {nameSpace}
         }}
 
 
-        public {typeName}({HttpClient.FullTypeName} {HttpClient.ParameterName})
+        public {type.Name}({HttpClient.FullTypeName} {HttpClient.ParameterName})
         {{
 {GenerateInitializations()}
         }}
     }}
 }}
 
-{string.Join(Environment.NewLine, clientTypeNames.Select(clientTypeName => GetClientPartial(nameSpace, clientTypeName)))}";
+{string.Join(Environment.NewLine, clientTypeNames.Select(clientTypeName => GetClientPartial(type.NameSpace, clientTypeName)))}";
 
         string GenerateFields()
             => string.Join(Environment.NewLine,

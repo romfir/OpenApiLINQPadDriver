@@ -89,10 +89,11 @@ async Task Main()
     * `Classes implementing the Prism base class` - WIP, the library that is required is not added to the compilation
     * `Records - read only POCOs (Plain Old C# Objects)`
 * Generate sync methods - by default sync methods will not be generated
+* Build in Release - Build generated code in Release, default: `false`
 
 ### Misc ###
 
-* Debug info: show additional driver debug info, e.g. generated data context sources and add `Execution Times` explorer item with exectuion times of parts of the generation pipeline
+* Debug info: show additional driver debug info, e.g. generated data context sources, add `Execution Times` explorer item with execution times of parts of the generation pipeline and will add warnings from the compilation if any were present
 * Remember this connection: connection will be available on next run.
 * Contains production data: files contain production data.
 
@@ -159,6 +160,7 @@ https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/
 * Add `Prism.Mvvm` to compilation when prism class style is picked
 * When multiple servers are found allow selection
 * LINQPad 5 support
-* Examples (include in the nuget)
+* Examples (include in the nuget) - possibly the same ones could be used in testing
 * Expose JsonSerializerSettings setter on multi client setup
 * Expose ReadResponseAsString on multi client setup
+* Treat warnings as errors in generated code (`generalDiagnosticOption: ReportDiagnostic.Error`)

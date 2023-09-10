@@ -13,6 +13,11 @@ public class OpenApiContextDriverProperties : BaseViewModel
 {
     private readonly IConnectionInfo _connectionInfo;
     private readonly XElement _driverData;
+#if DEBUG_PUBLISH_TO_LINQPAD_FOLDER
+    private const bool DefaultDebugInfo = true;
+#else
+    private const bool DefaultDebugInfo = false;
+#endif
 
     public OpenApiContextDriverProperties(IConnectionInfo connectionInfo)
     {
@@ -66,6 +71,12 @@ public class OpenApiContextDriverProperties : BaseViewModel
         set => SetValue(value);
     }
 
+    public bool BuildInRelease
+    {
+        get => GetValue(false);
+        set => SetValue(value);
+    }
+
     public bool Persist
     {
         get => GetValue(true);
@@ -80,7 +91,7 @@ public class OpenApiContextDriverProperties : BaseViewModel
 
     public bool DebugInfo
     {
-        get => GetValue(false);
+        get => GetValue(DefaultDebugInfo);
         set => SetValue(value);
     }
 
@@ -93,15 +104,15 @@ public class OpenApiContextDriverProperties : BaseViewModel
     private T GetValue<T>(Func<string?, T> convert, T defaultValue, [CallerMemberName] string callerMemberName = "")
         => convert(_driverData.Element(callerMemberName)?.Value) ?? defaultValue;
 
-    private bool GetValue(bool defaultValue, [CallerMemberName] string callerMemberName = "") =>
-        GetValue(static v => v.ToBoolSafe(), defaultValue, callerMemberName)!.Value;
+    private bool GetValue(bool defaultValue, [CallerMemberName] string callerMemberName = "")
+        => GetValue(static v => v.ToBoolSafe(), defaultValue, callerMemberName)!.Value;
 
-    private string? GetValue(string defaultValue, [CallerMemberName] string callerMemberName = "") =>
-        GetValue(static v => v, defaultValue, callerMemberName);
+    private string? GetValue(string defaultValue, [CallerMemberName] string callerMemberName = "")
+        => GetValue(static v => v, defaultValue, callerMemberName);
 
     private T GetValue<T>(T defaultValue, [CallerMemberName] string callerMemberName = "")
-        where T : Enum
-        => (T)GetValue(v => Enum.TryParse(typeof(T), v, out var val) ? val : defaultValue, defaultValue, callerMemberName)!;
+        where T : struct, Enum
+        => (T)GetValue(v => Enum.TryParse<T>(v, out var val) ? val : defaultValue, defaultValue, callerMemberName);
 
     private void SetValue<T>(T value, [CallerMemberName] string callerMemberName = "")
     {
