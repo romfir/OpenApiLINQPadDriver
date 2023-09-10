@@ -6,6 +6,7 @@
 		<Deterministic>true</Deterministic>
 		<LangVersion>latest</LangVersion>
 		<Configurations>Debug;Release;Debug_Publish_To_LINQPad_Folder</Configurations>
+		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug_Publish_To_LINQPad_Folder'">
