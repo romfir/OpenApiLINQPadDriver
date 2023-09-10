@@ -9,4 +9,7 @@ internal static class OpenApiDocumentHelper
         => uri.Scheme == Uri.UriSchemeFile
             ? OpenApiDocument.FromFileAsync(uri.LocalPath)
             : OpenApiDocument.FromUrlAsync(uri.ToString());
+
+    public static OpenApiDocument GetFromUri(Uri uri)
+        => AsyncHelper.RunSync(() => GetFromUriAsync(uri));
 }

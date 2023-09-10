@@ -95,7 +95,7 @@
                     <TextBlock Style="{StaticResource TextBlockHyperlinkContainer}">
                         <Hyperlink Name="GetOpenApiJsonHyperlink"
                                    Style="{StaticResource StyledHyperlink}" 
-                                   TextDecorations=""
+                                   TextDecorations="None"
                                    Click="GetOpenApiJsonHyperlink_OnClick"
                                    >
                             <Run Text="Get from disk" />
@@ -114,7 +114,7 @@
                     <TextBlock Style="{StaticResource TextBlockHyperlinkContainer}">
                         <Hyperlink Name="DownloadApiUriHyperlink"
                                    Style="{StaticResource StyledHyperlink}" 
-                                   TextDecorations=""
+                                   TextDecorations="None"
                                    Click="DownloadApiUriHyperlink_OnClick" 
                                    IsEnabled ="{Binding IsOpenApiDocumentUriValid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
                             <Run Text="Get from swagger.json" />
@@ -167,6 +167,9 @@
 
                 <StackPanel Grid.Row="3" Grid.Column="0" Style="{StaticResource CheckBoxStackPanelStyle}">
                     <CheckBox IsChecked="{Binding GenerateSyncMethods}" Content="Generate sync _methods" ToolTip="Generate synchronous methods"/>
+                </StackPanel>
+                <StackPanel Grid.Row="3" Grid.Column="1" Style="{StaticResource CheckBoxStackPanelStyle}">
+                    <CheckBox IsChecked="{Binding BuildInRelease}" Content="Build in _Release" ToolTip="Build generated code in Release"/>
                 </StackPanel>
             </Grid>
         </GroupBox>

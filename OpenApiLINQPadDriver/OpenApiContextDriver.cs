@@ -6,9 +6,11 @@ using System.Reflection;
 using LINQPad.Extensibility.DataContext;
 
 namespace OpenApiLINQPadDriver;
+// ReSharper disable once UnusedMember.Global
 public class OpenApiContextDriver : DynamicDataContextDriver
 {
 #if DEBUG_PUBLISH_TO_LINQPAD_FOLDER
+    private const string DriverName = "OpenApi Driver from folder";
     public OpenApiContextDriver()
     {
         AppDomain.CurrentDomain.FirstChanceException += (_, args) =>
@@ -17,6 +19,8 @@ public class OpenApiContextDriver : DynamicDataContextDriver
                 Debugger.Launch();
         };
     }
+#else
+    private const string DriverName = "OpenApi Driver";
 #endif
 
     public override string GetConnectionDescription(IConnectionInfo cxInfo)
@@ -38,7 +42,7 @@ public class OpenApiContextDriver : DynamicDataContextDriver
         return true;
     }
 
-    public override string Name => "OpenApi Driver";
+    public override string Name => DriverName;
 
     // ReSharper disable StringLiteralTypo
     public override string Author => "Damian Romanowski (romfir22@gmail.com)";
