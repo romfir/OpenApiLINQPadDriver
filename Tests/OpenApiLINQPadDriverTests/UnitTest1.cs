@@ -94,10 +94,19 @@ public class ApiFixture : IDisposable
     {
         try
         {
+            const string driverName = "OpenApiLINQPadDriver";
+            var linqPadFolderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LINQPad");
+            var nugetDriverPath = Path.Combine(linqPadFolderPath, "NuGet.Drivers", driverName);
+            var folderDriverPath = Path.Combine(linqPadFolderPath, "Drivers", "DataContext", driverName);
+            if (Directory.Exists(nugetDriverPath))
+                throw new InvalidOperationException($"Driver already exists inside \"{nugetDriverPath}\", please remove it via LINQPad");
+            if (Directory.Exists(folderDriverPath))
+                throw new InvalidOperationException($"Driver already exists inside \"{folderDriverPath}\", please remove it via LINQPad");
+
             // Copy driver to LPRun drivers folder.
             Driver.InstallWithDepsJson(
-                "OpenApiLINQPadDriver",
-                "OpenApiLINQPadDriver.dll",
+                driverName,
+                driverName + ".dll",
                 "Tests"
             );
 
@@ -106,8 +115,6 @@ public class ApiFixture : IDisposable
 
             builder.Services.AddControllers();
 
-            // Add services to the container.
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
