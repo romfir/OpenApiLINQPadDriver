@@ -18,7 +18,6 @@
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
 		<PackageReference Include="Moq" Version="4.20.69" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
 		<PackageReference Include="xunit" Version="2.5.0" />
 		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -47,5 +46,10 @@
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
+
+<!--workaround-->
+	<!--<Target Name="TestTarget" AfterTargets="Build">
+		<Copy SourceFiles="$(OutputPath)\LPRun\Bin\LINQPad.Runtime.dll" DestinationFiles="$(OutputPath)\LINQPad.Runtime.dll" UseHardlinksIfPossible="true"/>
+	</Target>-->
 
 </Project>
