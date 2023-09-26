@@ -3,30 +3,34 @@
 	<PropertyGroup>
 		<TargetFramework>net7.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Deterministic>true</Deterministic>
+		<!--<Deterministic>true</Deterministic>-->
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<IsPackable>false</IsPackable>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<EnableWindowsTargeting>true</EnableWindowsTargeting>
 	</PropertyGroup>
 
 	<ItemGroup>
+		<!--<PackageReference Include="FlaUI.UIA3" Version="4.0.0" />-->
 		<PackageReference Include="FluentAssertions" Version="6.12.0" />
-		<PackageReference Include="LPRun" Version="7.8.5" />
+		<PackageReference Include="LINQPad.Runtime" Version="7.7.15" />
+		<!--possibly only on local?-->
+		<PackageReference Include="Meziantou.Xunit.ParallelTestFramework" Version="2.1.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.11" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
 		<PackageReference Include="Moq" Version="4.20.69" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-		<PackageReference Include="xunit" Version="2.5.0" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.0">
+		<PackageReference Include="xunit" Version="2.5.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.5.1">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="coverlet.collector" Version="6.0.0">
+		<!--<PackageReference Include="coverlet.collector" Version="6.0.0">
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		</PackageReference>-->
+		<!--<PackageReference Include="Xunit.StaFact" Version="1.1.11" />-->
 	</ItemGroup>
 
 	<ItemGroup>
@@ -34,22 +38,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="LPRun\Templates\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\OpenApiLINQPadDriver\OpenApiLINQPadDriver.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<None Update="LPRun\Templates\Test.linq">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
-		</None>
-	</ItemGroup>
-
-<!--workaround-->
-	<!--<Target Name="TestTarget" AfterTargets="Build">
-		<Copy SourceFiles="$(OutputPath)\LPRun\Bin\LINQPad.Runtime.dll" DestinationFiles="$(OutputPath)\LINQPad.Runtime.dll" UseHardlinksIfPossible="true"/>
-	</Target>-->
 
 </Project>

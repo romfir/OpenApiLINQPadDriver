@@ -98,6 +98,12 @@
           "Newtonsoft.Json": "10.0.1"
         }
       },
+      "Prism.Core": {
+        "type": "Direct",
+        "requested": "[8.1.97, )",
+        "resolved": "8.1.97",
+        "contentHash": "EP5zrvWddw3eSq25Y7hHnDYdmLZEC2Z/gMrvmHzUuLbitmA1UaS7wQUlSwNr9Km8lzJNCvytFnaGBEFukHgoHg=="
+      },
       "Fluid.Core": {
         "type": "Transitive",
         "resolved": "2.2.15",
@@ -1235,6 +1241,12 @@
           "NJsonSchema": "10.9.0",
           "Newtonsoft.Json": "10.0.1"
         }
+      },
+      "Prism.Core": {
+        "type": "Direct",
+        "requested": "[8.1.97, )",
+        "resolved": "8.1.97",
+        "contentHash": "EP5zrvWddw3eSq25Y7hHnDYdmLZEC2Z/gMrvmHzUuLbitmA1UaS7wQUlSwNr9Km8lzJNCvytFnaGBEFukHgoHg=="
       },
       "Fluid.Core": {
         "type": "Transitive",

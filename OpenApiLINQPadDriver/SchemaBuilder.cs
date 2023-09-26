@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using LINQPad.Extensibility.DataContext;
@@ -30,7 +31,6 @@ internal static class SchemaBuilder
 #else
         var stopWatch = Stopwatch.StartNew();
 #endif
-
         var document = OpenApiDocumentHelper.GetFromUri(new Uri(openApiContextDriverProperties.OpenApiDocumentUri!));
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Downloading document");
@@ -38,7 +38,8 @@ internal static class SchemaBuilder
         document.SetServer(openApiContextDriverProperties.ApiUri!);
 
         var endpointGrouping = openApiContextDriverProperties.EndpointGrouping;
-        var settings = CreateCsharpClientGeneratorSettings(endpointGrouping, openApiContextDriverProperties.JsonLibrary, openApiContextDriverProperties.ClassStyle,
+        var classStyle = openApiContextDriverProperties.ClassStyle;
+        var settings = CreateCsharpClientGeneratorSettings(endpointGrouping, openApiContextDriverProperties.JsonLibrary, classStyle,
             openApiContextDriverProperties.GenerateSyncMethods, mainContextType);
 
         var generator = new CSharpClientGenerator(document, settings);
@@ -47,6 +48,7 @@ internal static class SchemaBuilder
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Generating NSwag classes");
 
+        //possibly this switch should be an if based on SupportsMultipleClients?
         var clientSourceCode = endpointGrouping switch
         {
             EndpointGrouping.SingleClientFromOperationIdOperationName => ClientGenerator.SingleClientFromOperationIdOperationNameGenerator(mainContextType),
@@ -58,6 +60,7 @@ internal static class SchemaBuilder
 
         var references = openApiContextDriverProperties.GetCoreFxReferenceAssemblies()
             .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use lowest possible version 10.0.1
+            .AppendIf(classStyle == ClassStyle.Prism, typeof(Prism.IActiveAware).Assembly.Location)
             .ToArray();
 
 #pragma warning disable SYSLIB0044 //this is the only way to read this assembly, LINQPad does not give any other reference to it
@@ -130,17 +133,21 @@ internal static class SchemaBuilder
             var elapsed = stopWatch.Elapsed;
             stopWatch.Restart();
 #endif
+            File.AppendAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "log.txt"), name + " " + elapsed + Environment.NewLine);
             timeExplorerItem.Children.Add(ExplorerItemHelper.CreateForElapsedTime(name, elapsed));
         }
     }
 
-    private static CSharpClientGeneratorSettings CreateCsharpClientGeneratorSettings(EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle, bool generateSyncMethods,
-        TypeDescriptor type)
+    private static CSharpClientGeneratorSettings CreateCsharpClientGeneratorSettings(EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle,
+        bool generateSyncMethods, TypeDescriptor type)
     {
         var (operationNameGenerator, className) = endpointGrouping switch
         {
-            EndpointGrouping.MultipleClientsFromFirstTagAndOperationName => ((IOperationNameGenerator)new MultipleClientsFromFirstTagAndOperationNameGenerator(), "{controller}" + ClientPostFix),
-            EndpointGrouping.SingleClientFromOperationIdOperationName => (new SingleClientFromOperationIdOperationNameGenerator(), type.Name),
+            EndpointGrouping.MultipleClientsFromFirstTagAndOperationName
+                => ((IOperationNameGenerator)new MultipleClientsFromFirstTagAndOperationNameGenerator(), "{controller}" + ClientPostFix),
+
+            EndpointGrouping.SingleClientFromOperationIdOperationName
+                => (new SingleClientFromOperationIdOperationNameGenerator(), type.Name),
             _ => throw new InvalidOperationException()
         };
 
