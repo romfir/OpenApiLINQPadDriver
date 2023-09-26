@@ -28,6 +28,12 @@
 		<Description>$(AssemblyTitle).</Description>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>OpenApiLINQPadDriverTests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
@@ -70,6 +76,7 @@
 		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.20.0" />
 		<PackageReference Include="NSwag.Core" Version="13.20.0" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+		<PackageReference Include="Prism.Core" Version="8.1.97" />
 	</ItemGroup>
 
 	<ItemGroup>

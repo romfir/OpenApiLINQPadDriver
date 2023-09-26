@@ -5,6 +5,8 @@ VisualStudioVersion = 17.7.34024.191
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiLINQPadDriver", "OpenApiLINQPadDriver\OpenApiLINQPadDriver.csproj", "{6CB2FF6D-F4D8-4477-9549-562D54856796}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenApiLINQPadDriverTests", "Tests\OpenApiLINQPadDriverTests\OpenApiLINQPadDriverTests.csproj", "{A02D0072-0870-4C52-BF0C-FCB6B3546A79}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug_Publish_To_LINQPad_Folder|Any CPU = Debug_Publish_To_LINQPad_Folder|Any CPU
@@ -18,6 +20,12 @@ Global
 		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CB2FF6D-F4D8-4477-9549-562D54856796}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A02D0072-0870-4C52-BF0C-FCB6B3546A79}.Debug_Publish_To_LINQPad_Folder|Any CPU.ActiveCfg = Debug|Any CPU
+		{A02D0072-0870-4C52-BF0C-FCB6B3546A79}.Debug_Publish_To_LINQPad_Folder|Any CPU.Build.0 = Debug|Any CPU
+		{A02D0072-0870-4C52-BF0C-FCB6B3546A79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A02D0072-0870-4C52-BF0C-FCB6B3546A79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A02D0072-0870-4C52-BF0C-FCB6B3546A79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A02D0072-0870-4C52-BF0C-FCB6B3546A79}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
