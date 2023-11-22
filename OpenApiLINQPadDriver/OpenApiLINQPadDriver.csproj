@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<Nullable>enable</Nullable>
@@ -69,7 +69,7 @@
 		<PackageReference Include="NSwag.CodeGeneration" Version="13.20.0" />
 		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.20.0" />
 		<PackageReference Include="NSwag.Core" Version="13.20.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
 	</ItemGroup>
 
 	<ItemGroup>
