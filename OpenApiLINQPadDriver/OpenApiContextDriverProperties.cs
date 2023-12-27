@@ -65,6 +65,12 @@ public class OpenApiContextDriverProperties : BaseViewModel
         set => SetValue(value);
     }
 
+    public OpenApiFormat OpenApiFormat
+    {
+        get => GetValue(OpenApiFormat.Json);
+        set => SetValue(value);
+    }
+
     public bool GenerateSyncMethods
     {
         get => GetValue(false);
@@ -112,7 +118,7 @@ public class OpenApiContextDriverProperties : BaseViewModel
 
     private T GetValue<T>(T defaultValue, [CallerMemberName] string callerMemberName = "")
         where T : struct, Enum
-        => (T)GetValue(v => Enum.TryParse<T>(v, out var val) ? val : defaultValue, defaultValue, callerMemberName);
+        => GetValue(v => Enum.TryParse<T>(v, out var val) ? val : defaultValue, defaultValue, callerMemberName);
 
     private void SetValue<T>(T value, [CallerMemberName] string callerMemberName = "")
     {

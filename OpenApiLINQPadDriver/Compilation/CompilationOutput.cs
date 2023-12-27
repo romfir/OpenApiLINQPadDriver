@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace OpenApiLINQPadDriver.Compilation;
+﻿namespace OpenApiLINQPadDriver.Compilation;
 internal sealed class CompilationOutput
 {
     public string[] References { get; }
@@ -15,7 +13,7 @@ internal sealed class CompilationOutput
 
     public CompilationOutput(string[] errors, string[] warnings, string[] references, string? sourceCodeAroundFirstError = null)
     {
-        Successful = !errors.Any();
+        Successful = errors.Length == 0;
         Errors = errors;
         Warnings = warnings;
         References = references;

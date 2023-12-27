@@ -18,7 +18,7 @@ internal static class SchemaBuilder
     private const string ClientPostFix = "Client";
     private const string TypedDataContextName = "ApiClient";
 
-    internal static List<ExplorerItem> GetSchemaAndBuildAssembly(OpenApiContextDriverProperties openApiContextDriverProperties, AssemblyName assemblyToBuild, ref string nameSpace,
+    internal static List<ExplorerItem> GetSchemaAndBuildAssembly(OpenApiContextDriverProperties driverProperties, AssemblyName assemblyToBuild, ref string nameSpace,
         ref string typeName)
     {
         typeName = TypedDataContextName;
@@ -30,16 +30,15 @@ internal static class SchemaBuilder
 #else
         var stopWatch = Stopwatch.StartNew();
 #endif
-
-        var document = OpenApiDocumentHelper.GetFromUri(new Uri(openApiContextDriverProperties.OpenApiDocumentUri!));
+        var document = OpenApiDocumentHelper.GetFromUri(new Uri(driverProperties.OpenApiDocumentUri!), driverProperties.OpenApiFormat);
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Downloading document");
 
-        document.SetServer(openApiContextDriverProperties.ApiUri!);
+        document.SetServer(driverProperties.ApiUri!);
 
-        var endpointGrouping = openApiContextDriverProperties.EndpointGrouping;
-        var settings = CreateCsharpClientGeneratorSettings(endpointGrouping, openApiContextDriverProperties.JsonLibrary, openApiContextDriverProperties.ClassStyle,
-            openApiContextDriverProperties.GenerateSyncMethods, mainContextType);
+        var endpointGrouping = driverProperties.EndpointGrouping;
+        var classStyle = driverProperties.ClassStyle;
+        var settings = CreateCsharpClientGeneratorSettings(endpointGrouping, driverProperties.JsonLibrary, classStyle, driverProperties.GenerateSyncMethods, mainContextType);
 
         var generator = new CSharpClientGenerator(document, settings);
 
@@ -56,39 +55,39 @@ internal static class SchemaBuilder
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Generating clients partials");
 
-        var references = openApiContextDriverProperties.GetCoreFxReferenceAssemblies()
-            .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use lowest possible version 10.0.1
+        var references = driverProperties.GetCoreFxReferenceAssemblies()
+            .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use the lowest possible version 10.0.1
+            .AppendIf(classStyle == ClassStyle.Prism, typeof(Prism.IActiveAware).Assembly.Location)
             .ToArray();
 
 #pragma warning disable SYSLIB0044 //this is the only way to read this assembly, LINQPad does not give any other reference to it
         var assemblyPath = assemblyToBuild.CodeBase!;
 #pragma warning restore SYSLIB0044
-
         var compileResult = RoslynHelper.CompileSource(new CompilationInput
         {
             FilePathsToReference = references,
             OutputPath = assemblyPath,
-            SourceCode = new[] { codeGeneratedByNSwag, clientSourceCode }
-        }, openApiContextDriverProperties.BuildInRelease);
+            SourceCode = [codeGeneratedByNSwag, clientSourceCode]
+        }, driverProperties.BuildInRelease);
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Compiling code");
 
         var explorerItems = new List<ExplorerItem>();
 
-        if (openApiContextDriverProperties.DebugInfo)
+        if (driverProperties.DebugInfo)
         {
             explorerItems.Add(timeExplorerItem);
 
-            if (compileResult.Warnings.Any())
+            if (compileResult.Warnings.Length > 0)
             {
                 explorerItems.Add(ExplorerItemHelper.CreateForCompilationWarnings(compileResult.Warnings));
             }
         }
 
-        if (compileResult.Errors.Any() || openApiContextDriverProperties.DebugInfo)
+        if (compileResult.Errors.Length > 0 || driverProperties.DebugInfo)
             explorerItems.AddRange(ExplorerItemHelper.CreateForGeneratedCode(codeGeneratedByNSwag, clientSourceCode));
 
-        if (compileResult.Errors.Any())
+        if (compileResult.Errors.Length > 0)
         {
             explorerItems.Add(ExplorerItemHelper.CreateForCompilationErrors(compileResult.Errors));
             return explorerItems;
