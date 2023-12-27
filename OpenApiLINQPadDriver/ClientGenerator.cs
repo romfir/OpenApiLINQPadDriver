@@ -32,14 +32,12 @@ internal static class ClientGenerator
                              }
                          }
                  
-                 
                          public {{type.Name}}({{HttpClient.FullTypeName}} {{HttpClient.ParameterName}})
                          {
                  {{GenerateInitializations()}}
                          }
                      }
                  }
-
                  {{string.Join(Environment.NewLine, clientTypeNames.Select(clientTypeName => GetClientPartial(type.NameSpace, clientTypeName)))}}
                  """;
 
@@ -74,6 +72,5 @@ internal static class ClientGenerator
                      }
                  }
              }
-
              """;
 }
