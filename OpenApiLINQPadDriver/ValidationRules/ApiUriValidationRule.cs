@@ -1,6 +1,4 @@
 ﻿
 namespace OpenApiLINQPadDriver.ValidationRules;
 
-internal class ApiUriValidationRule : RequiredUriValidationRule
-{
-}
+internal class ApiUriValidationRule : RequiredUriValidationRule;

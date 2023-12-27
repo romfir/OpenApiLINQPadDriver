@@ -1,4 +1,4 @@
-# OpenApiLINQPadDriver for LINQPad 7
+# OpenApiLINQPadDriver for LINQPad 7/8
 [![Latest build](https://github.com/romfir/OpenApiLINQPadDriver/workflows/Build/badge.svg)](https://github.com/romfir/OpenApiLINQPadDriver/actions)
 [![NuGet](https://img.shields.io/nuget/v/OpenApiLINQPadDriver)](https://www.nuget.org/packages/OpenApiLINQPadDriver)
 [![Downloads](https://img.shields.io/nuget/dt/OpenApiLINQPadDriver)](https://www.nuget.org/packages/OpenApiLINQPadDriver)
@@ -6,7 +6,7 @@
 
 ## Description ##
 
-OpenApiLINQPadDriver is LINQPad 7 dynamic data context driver for creating C# clients based on [Open API](https://www.openapis.org)/[Swagger](https://swagger.io/specification/) specifications
+OpenApiLINQPadDriver is LINQPad 7/8 dynamic data context driver for creating C# clients based on [Open API](https://www.openapis.org)/[Swagger](https://swagger.io/specification/) specifications
 
 * Specification is read using [NJsonSchema](https://github.com/RicoSuter/NJsonSchema) and clients are generated using [NSwag](https://github.com/RicoSuter/NSwag)
 
@@ -21,17 +21,18 @@ generation of lpx6 files is on the roadmap, for now we only support instalation 
 
 ## Prerequisites ##
 
+* [LINQPad 8](https://www.linqpad.net/LINQPad7.aspx): [.NET 8](https://dotnet.microsoft.com/download/dotnet/8.0)
 * [LINQPad 7](https://www.linqpad.net/LINQPad7.aspx): [.NET 7](https://dotnet.microsoft.com/download/dotnet/7.0)/[.NET 6](https://dotnet.microsoft.com/download/dotnet/6.0)
 
 ## Installation ##
 
-### LINQPad 7 ###
+### LINQPad 7/8 ###
 
 #### NuGet ####
 
 [![NuGet](https://img.shields.io/nuget/v/OpenApiLINQPadDriver)](https://www.nuget.org/packages/OpenApiLINQPadDriver)
 
-* Open LINQPad 7.
+* Open LINQPad 7/8.
 * Click `Add connection` link.
 * Click button `View more drivers...`
 * Click radio button `Show all drivers` and type `OpenApiLINQPadDriver` (for now it is also required to check `Include Prerelease` checkbox)
@@ -44,8 +45,8 @@ Open API Connection can be added the same way as any other connection.
 
 * Click `Add Connection`
 * Select `OpenApi Driver`
-* Enter `Open Api Json Uri` or click `Get from disk` and pick it from file
-* Manually enter `API Uri` or click `Get from swagger.json`, if servers are found in the specification uri of the first one will be picked
+* Enter `Open Api/Swagger Uri` or click `Get from disk` and pick it from file
+* Manually enter `API Uri` or click `Get from Open Api document`, if servers are found in the specification then uri of the first one will be picked
 * Set settings
 * Click `OK`
 * Client should start generation, you can use it by right clicking on it and choosing `Use in Current Query` or by picking it from `Connection` select
@@ -86,7 +87,7 @@ async Task Main()
 * Class style
     * `POCOs (Plain Old C# Objects)`
     * `Classes implementing the INotifyPropertyChanged interface`
-    * `Classes implementing the Prism base class` - WIP, the library that is required is not added to the compilation
+    * `Classes implementing the Prism base class`
     * `Records - read only POCOs (Plain Old C# Objects)`
 * Generate sync methods - by default sync methods will not be generated
 * Build in Release - Build generated code in Release, default: `false`
@@ -132,6 +133,7 @@ private void PrepareRequest(HttpClient httpClient, HttpRequestMessage requestMes
 ### Tools ###
 
 * [LINQPad 7](https://www.linqpad.net/LINQPad7.aspx)
+* [LINQPad 8](https://www.linqpad.net/LINQPad8.aspx)
 * [LINQPad Command-Line and Scripting (LPRun)](https://www.linqpad.net/lprun.aspx)
 
 ### Libraries ###
@@ -141,7 +143,7 @@ private void PrepareRequest(HttpClient httpClient, HttpRequestMessage requestMes
 * [Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json) - required by NSwag, included to bump version
 
 ### Development ###
-* [OpenApiLINQPadDriver.csproj](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj) contains special `Debug_Publish_To_LINQPad_Folder` debug build configuration, if it is chosen, code will be build only targeting `net7.0-windows` with [additional properties](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj?plain=1#L52-L57)
+* [OpenApiLINQPadDriver.csproj](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj) contains special `Debug_Publish_To_LINQPad_Folder` debug build configuration, if it is chosen, code will be build only targeting `net8.0-windows` with [additional properties](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj?plain=1#L52-L57)
 * LINQPad can pick drivers from `\LINQPad\Drivers\DataContext\NetCore` folder
 * [Additionaly when exceptions will be thrown it will be possible to attach a debugger](https://github.com/romfir/OpenApiLINQPadDriver/blob/master/OpenApiLINQPadDriver/OpenApiContextDriver.cs?plain=1#L12-L21)
 
@@ -154,8 +156,6 @@ private void PrepareRequest(HttpClient httpClient, HttpRequestMessage requestMes
 * Methods parameters and responses in tree view
 * Auto dump response
 * Auth helper methods eg. `SetBearerToken`
-* Check if it is possible to add summary to generated methods
-* Add `Prism.Mvvm` to compilation when prism class style is picked
 * When multiple servers are found allow selection
 * LINQPad 5 support
 * Examples (include in the nuget) - possibly the same ones could be used in testing
