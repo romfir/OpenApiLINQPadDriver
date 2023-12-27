@@ -10,21 +10,21 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Debug_Publish_To_LINQPad_Folder'">
-		<TargetFramework>net7.0-windows</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' != 'Debug_Publish_To_LINQPad_Folder'">
-		<TargetFrameworks>net6.0-windows;net7.0-windows</TargetFrameworks>
+		<TargetFrameworks>net6.0-windows;net7.0-windows;net8.0-windows</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup>
 		<AssemblyName>OpenApiLINQPadDriver</AssemblyName>
-		<Version>0.0.4-alpha</Version>
+		<Version>0.0.5-alpha</Version>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<Authors>Damian Romanowski (romfir22@gmail.com)</Authors>
 		<Copyright>Copyright © Damian Romanowski 2023-$([System.DateTime]::Now.Year)</Copyright>
 		<ApplicationIcon>OpenAPI.ico</ApplicationIcon>
-		<AssemblyTitle>LINQPad 7 Open API Driver</AssemblyTitle>
+		<AssemblyTitle>LINQPad 7/8 Open API Driver</AssemblyTitle>
 		<Description>$(AssemblyTitle).</Description>
 	</PropertyGroup>
 
@@ -69,22 +69,24 @@
 		<PackageReference Include="NSwag.CodeGeneration" Version="13.20.0" />
 		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.20.0" />
 		<PackageReference Include="NSwag.Core" Version="13.20.0" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" />
+		<PackageReference Include="NSwag.Core.Yaml" Version="13.20.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
+		<PackageReference Include="Prism.Core" Version="8.1.97" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="FailedConnection.png">
-			<PackagePath>lib\net6.0-windows7.0;lib\net7.0-windows7.0</PackagePath>
+			<PackagePath>lib\net6.0-windows7.0;lib\net7.0-windows7.0;lib\net8.0-windows7.0</PackagePath>
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <PackageCopyToOutput>true</PackageCopyToOutput>
 		  <Pack>True</Pack>
 		</Content>
 		<Content Include="Connection.png">
-			<PackagePath>lib\net6.0-windows7.0;lib\net7.0-windows7.0</PackagePath>
+			<PackagePath>lib\net6.0-windows7.0;lib\net7.0-windows7.0;lib\net8.0-windows7.0</PackagePath>
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <PackageCopyToOutput>true</PackageCopyToOutput>
 		  <Pack>True</Pack>
