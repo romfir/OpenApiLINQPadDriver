@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using Microsoft.Win32;
+using OpenApiLINQPadDriver.Enums;
 using OpenApiLINQPadDriver.Extensions;
 
 namespace OpenApiLINQPadDriver;
@@ -16,13 +18,37 @@ internal partial class ConnectionDialog
     {
         DataContext = openApiContextDriverProperties;
         InitializeComponent();
+
+        DataObject.AddPastingHandler(OpenApiDocumentUri, OnPasteOpenApiDocumentUri);
+    }
+
+    private OpenApiContextDriverProperties Properties => (OpenApiContextDriverProperties)DataContext;
+
+    private void OnPasteOpenApiDocumentUri(object sender, DataObjectPastingEventArgs e)
+    {
+        var isText = e.SourceDataObject.GetDataPresent(DataFormats.UnicodeText, true);
+
+        if (!isText)
+            return;
+
+        if (e.SourceDataObject.GetData(DataFormats.UnicodeText) is not string text)
+            return;
+
+        if (text.EndsWith(".json"))
+        {
+            Properties.OpenApiFormat = OpenApiFormat.Json;
+            OpenApiFormatComboBox.UpdateSelectedValueProperty();
+        }
+        else if (text.EndsWith(".yaml"))
+        {
+            Properties.OpenApiFormat = OpenApiFormat.Yaml;
+            OpenApiFormatComboBox.UpdateSelectedValueProperty();
+        }
     }
 
     private void BtnOK_OnClick(object sender, RoutedEventArgs e)
     {
-        var dialogProperties = (OpenApiContextDriverProperties)DataContext;
-
-        if (dialogProperties is { IsOpenApiDocumentUriValid: true, IsApiUriValid: true })
+        if (Properties is { IsOpenApiDocumentUriValid: true, IsApiUriValid: true })
             DialogResult = true;
     }
 
@@ -31,18 +57,26 @@ internal partial class ConnectionDialog
         var hyperlink = (Hyperlink)sender;
 
         hyperlink.IsEnabled = false;
+        var properties = Properties;
+        var mode = properties.OpenApiFormat;
 
+        var extension = mode switch
+        {
+            OpenApiFormat.Json => "json",
+            OpenApiFormat.Yaml => "yaml",
+            _ => throw new InvalidOperationException()
+        };
         try
         {
             var openFileDialog = new OpenFileDialog
             {
-                Title = "Get swagger.json",
+                Title = $"Get swagger.{extension}",
                 Multiselect = false,
                 ValidateNames = true,
                 CheckPathExists = true,
                 CheckFileExists = true,
-                DefaultExt = "json",
-                Filter = "*.json|*.json",
+                DefaultExt = extension,
+                Filter = $"*.{extension}|*.{extension}",
                 AddExtension = true
             };
 
@@ -50,7 +84,7 @@ internal partial class ConnectionDialog
 
             if (result)
             {
-                ((OpenApiContextDriverProperties)DataContext).OpenApiDocumentUri = openFileDialog.FileName;
+                properties.OpenApiDocumentUri = openFileDialog.FileName;
                 OpenApiDocumentUri.UpdateText();
             }
         }
@@ -64,21 +98,21 @@ internal partial class ConnectionDialog
     {
         var hyperlink = (Hyperlink)sender;
 
-        var dialogProperties = (OpenApiContextDriverProperties)DataContext;
+        var properties = Properties;
 
-        if (!dialogProperties.IsOpenApiDocumentUriValid)
+        if (!properties.IsOpenApiDocumentUriValid)
             return;
 
         hyperlink.IsEnabled = false;
 
         try
         {
-            var document = await OpenApiDocumentHelper.GetFromUriAsync(new Uri(dialogProperties.OpenApiDocumentUri!)).ConfigureAwait(false);
+            var document = await OpenApiDocumentHelper.GetFromUriAsync(new Uri(properties.OpenApiDocumentUri!), properties.OpenApiFormat).ConfigureAwait(false);
 
             var firstServerOrNull = document.Servers.FirstOrDefault();
             if (firstServerOrNull != null)
             {
-                dialogProperties.ApiUri = firstServerOrNull.Url;
+                properties.ApiUri = firstServerOrNull.Url;
 
                 Dispatcher.Invoke(ApiUri.UpdateText);
             }

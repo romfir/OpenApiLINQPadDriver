@@ -36,7 +36,7 @@ internal static class RoslynHelper
         var csharpCompilation = CSharpCompilation.Create(fileNameWithoutExtension, syntaxTrees, executableReferences, options);
         var diagnostics = csharpCompilation.GetDiagnostics();
         var errorsFromCompilation = diagnostics.GetErrors();
-        if (errorsFromCompilation.Any())
+        if (errorsFromCompilation.Length > 0)
         {
             var diagnosticsFromCompilation = diagnostics.GetWarnings();
             var sourceCodeAroundFirstError = GetSurroundingSource(diagnostics.First(d => d.Severity == DiagnosticSeverity.Error).Location);

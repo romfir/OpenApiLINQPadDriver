@@ -65,6 +65,12 @@ public class OpenApiContextDriverProperties : BaseViewModel
         set => SetValue(value);
     }
 
+    public OpenApiFormat OpenApiFormat
+    {
+        get => GetValue(OpenApiFormat.Json);
+        set => SetValue(value);
+    }
+
     public bool GenerateSyncMethods
     {
         get => GetValue(false);

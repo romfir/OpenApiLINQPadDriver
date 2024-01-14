@@ -8,7 +8,7 @@ internal static class ExplorerItemHelper
     public static ExplorerItem CreateForTimeMeasurement()
         => new("Execution Times", ExplorerItemKind.Schema, ExplorerIcon.Box)
         {
-            Children = new List<ExplorerItem>()
+            Children = []
         };
 
     public static ExplorerItem CreateForCompilationErrors(IReadOnlyCollection<string> errors)
@@ -40,8 +40,8 @@ internal static class ExplorerItemHelper
         => new(name + " " + elapsed, ExplorerItemKind.Property, ExplorerIcon.Blank);
 
     public static List<ExplorerItem> CreateForGeneratedCode(string codeGeneratedByNSwag, string clientSourceCode)
-        => new()
-        {
+        =>
+        [
             new("NSwag generated source code", ExplorerItemKind.Schema, ExplorerIcon.Schema)
             {
                 ToolTipText = "Drag and drop context generated source code to text window",
@@ -52,5 +52,5 @@ internal static class ExplorerItemHelper
                 ToolTipText = "Drag and drop context source code to text window client",
                 DragText = clientSourceCode
             }
-        };
+        ];
 }

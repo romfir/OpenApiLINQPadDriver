@@ -26,12 +26,12 @@ public abstract class BaseViewModel : INotifyDataErrorInfo , INotifyPropertyChan
 
         AddErrorRange(propertyName, errorMessages);
 
-        return !errorMessages.Any();
+        return errorMessages.Count == 0;
     }
 
     private void AddErrorRange(string propertyName, ICollection<object> newErrors, bool isWarning = false)
     {
-        if (!newErrors.Any())
+        if (newErrors.Count == 0)
             return;
 
         if (!Errors.TryGetValue(propertyName, out var propertyErrors))
@@ -77,8 +77,8 @@ public abstract class BaseViewModel : INotifyDataErrorInfo , INotifyPropertyChan
           ? errors
           : new List<object>();
 
-    public bool HasErrors => Errors.Any();
-    public bool HasNoErrors => !Errors.Any();
+    public bool HasErrors => Errors.Count > 0;
+    public bool HasNoErrors => Errors.Count == 0;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null!)
@@ -91,8 +91,8 @@ public abstract class BaseViewModel : INotifyDataErrorInfo , INotifyPropertyChan
         OnPropertyChanged(nameof(HasNoErrors));
     }
 
-    private Dictionary<string, IList<object>> Errors { get; } = new();
+    private Dictionary<string, IList<object>> Errors { get; } = [];
 
-    protected virtual Dictionary<string, IList<ValidationRule>> ValidationRules { get; } = new();
+    protected virtual Dictionary<string, IList<ValidationRule>> ValidationRules { get; } = [];
 }
 

@@ -11,7 +11,7 @@
         Icon="/OpenApiLINQPadDriver;component/openapi.ico"
         Background="{x:Static SystemColors.ControlBrush}"
         Width="660" 
-        Height="310"
+        Height="315"
         WindowStartupLocation="CenterScreen"
         ShowInTaskbar="True"
         d:DataContext="{d:DesignInstance local:OpenApiContextDriverProperties, IsDesignTimeCreatable=False}"
@@ -73,6 +73,10 @@
                             ObjectType="{x:Type enumObjectDataSources:ClassStyleSource}"
                             MethodName="GetValues"/>
 
+        <ObjectDataProvider x:Key="OpenApiFormatData"
+                            ObjectType="{x:Type enumObjectDataSources:OpenApiFormatSource}"
+                            MethodName="GetValues"/>
+
         <Thickness x:Key="GroupControlMarginStyle" Left="0" Right="0" Top="2" Bottom="2"/>
 
         <Style x:Key="EnumComboBoxStyle" TargetType="{x:Type ComboBox}">
@@ -90,7 +94,12 @@
         
         <DockPanel>
             <WrapPanel Margin="0 0 0 2" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                <Label Padding="0,0,0,2" Content="_Open Api Json Uri (swagger.json): " Target="{Binding ElementName=OpenApiDocumentUri}"/>
+                <Label Padding="0,0,0,2" Content="_Open Api/Swagger Uri: " Target="{Binding ElementName=OpenApiDocumentUri}"/>
+                <ComboBox Name="OpenApiFormatComboBox"
+                          Style="{StaticResource GroupComboBoxStyle}"
+                          ToolTip="Open Api file format"
+                          SelectedValue="{Binding OpenApiFormat}"
+                          ItemsSource="{Binding Source={StaticResource OpenApiFormatData}}"/>
                 <TextBlock Style="{StaticResource WrappedTextBlock}">
                     <TextBlock Style="{StaticResource TextBlockHyperlinkContainer}">
                         <Hyperlink Name="GetOpenApiJsonHyperlink"
@@ -117,7 +126,7 @@
                                    TextDecorations="None"
                                    Click="DownloadApiUriHyperlink_OnClick" 
                                    IsEnabled ="{Binding IsOpenApiDocumentUriValid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
-                            <Run Text="Get from swagger.json" />
+                            <Run Text="Get from Open Api document" />
                         </Hyperlink>
                     </TextBlock>
         
