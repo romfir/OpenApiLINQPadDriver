@@ -17,7 +17,7 @@
 //        Action? close = null;
 //        var connectionInfoMock = new Mock<IConnectionInfo>();
 
-//        var xElement = XDocument.Parse(@$"    <DriverData>
+//        var xElement = XDocument.Parse(@"    <DriverData>
 //    <OpenApiDocumentUri>https://localhost/swagger/v1/swagger.json</OpenApiDocumentUri>
 //    <ApiUri>https://localhost/</ApiUri>
 //</DriverData>").Root!;
@@ -51,6 +51,9 @@
 //            window.Title.Should().Be("Open API Connection");
 
 //            var okButton = window.FindFirstDescendant(cf => cf.ByText("OK"))?.AsButton();
+
+//            okButton.Should().NotBeNull();
+
 //            var x = window.FindFirstDescendant(cf => cf.ByText("Open", PropertyConditionFlags.MatchSubstring)).AsLabel();
 
 
@@ -59,7 +62,7 @@
 //            //children.Should().NotBeNull();
 //            x.Should().NotBeNull();
 
-//            x.Text.Should().Be("Open Api Json Uri (swagger.json): ");
+//            x.Text.Should().Be("Open Api/Swagger Uri: ");
 
 //            var input = window.FindFirstDescendant(cf =>
 //                    cf.ByAutomationId("OpenApiDocumentUri", PropertyConditionFlags.MatchSubstring))
@@ -73,7 +76,7 @@
 
 //            await Task.Delay(200);
 
-//            okButton.Click();
+//            okButton!.Click();
 //            close = null;
 
 //            //result = result;

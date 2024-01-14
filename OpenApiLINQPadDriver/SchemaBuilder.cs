@@ -132,7 +132,7 @@ internal static class SchemaBuilder
             var elapsed = stopWatch.Elapsed;
             stopWatch.Restart();
 #endif
-            File.AppendAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "log.txt"), name + " " + elapsed + Environment.NewLine);
+           // File.AppendAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "log.txt"), name + " " + elapsed + Environment.NewLine);
             timeExplorerItem.Children.Add(ExplorerItemHelper.CreateForElapsedTime(name, elapsed));
         }
     }

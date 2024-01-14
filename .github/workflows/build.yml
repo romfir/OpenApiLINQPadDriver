@@ -21,7 +21,7 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
@@ -44,6 +44,9 @@ jobs:
 
     - name: ${{ env.SLN }} ${{ env.CONFIGURATION }} Build
       run: dotnet build ${{ env.SLN }} --no-restore --configuration ${{ env.CONFIGURATION }} -p:GITHUB_ACTIONS=true
+
+    - name: ${{ env.SLN }} ${{ env.CONFIGURATION }} Test
+      run: dotnet test ${{ env.SLN }} --no-restore --no-build --configuration ${{ env.CONFIGURATION }}
 
     - name: Publish Artifacts
       uses: actions/upload-artifact@v4

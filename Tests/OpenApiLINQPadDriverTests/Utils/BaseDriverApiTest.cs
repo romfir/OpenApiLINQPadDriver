@@ -15,10 +15,10 @@ public abstract class BaseDriverApiTest : IAsyncLifetime
     private string ApiUrl => _apiUri ?? throw new ArgumentNullException(nameof(_apiUri));
     private static readonly string BaseDir = Path.GetDirectoryName(new Uri(Assembly.GetExecutingAssembly().Location).LocalPath)!;
 
-    private readonly List<Action<WebApplication>> _endpoints = new();
+    private readonly List<Action<WebApplication>> _endpoints = [];
     private readonly QueryExecutor? _queryExecutor = new();
 
-    protected void StartApi()
+    protected void StartApi(bool removeServerFromApiDefinition = false)
     {
         LinqPadHelper.ThrowIfDriverExists(DriverName);
 
@@ -29,10 +29,13 @@ public abstract class BaseDriverApiTest : IAsyncLifetime
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(options =>
         {
-            //options.AddServer(new OpenApiServer
-            //{
-            //    Url = ApiUrl
-            //});
+            if (!removeServerFromApiDefinition)
+            {
+                options.AddServer(new OpenApiServer
+                {
+                    Url = ApiUrl
+                });
+            }
         });
 
         //by using :0 port an empty one will be assigned
@@ -58,7 +61,7 @@ public abstract class BaseDriverApiTest : IAsyncLifetime
     {
         var files = new List<string> { DriverName + ".dll", GetDepsJsonRelativePath(DriverName + ".dll", "Tests") };
 
-        var driverOutputPath = Path.Combine("drivers", "DataContext", "NetCore", DriverName);
+        var driverOutputPath = Path.Combine("Drivers", "DataContext", "NetCore", DriverName);
 
         Directory.CreateDirectory(driverOutputPath);
 
@@ -88,7 +91,7 @@ public abstract class BaseDriverApiTest : IAsyncLifetime
     }
 
     protected Task<string> ExecuteScriptAsync(string script, EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle)
-        => _queryExecutor!.RunAsync(ApiUrl, script, endpointGrouping, jsonLibrary, classStyle);
+        => _queryExecutor!.RunAsync(ApiUrl, script, endpointGrouping, jsonLibrary, classStyle, OpenApiFormat.Json);
 
     protected void MapGet(string controllerName, string pattern, string name, Delegate handler)
         => _endpoints.Add(app =>

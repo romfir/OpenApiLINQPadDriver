@@ -2,7 +2,7 @@
 public class CustomResponseBody : BaseDriverApiTest
 {
     [Theory]
-    [MemberData(nameof(EnumInlineData.Data), MemberType = typeof(EnumInlineData))]
+    [MemberData(nameof(EnumInlineData.Instance), MemberType = typeof(EnumInlineData))]
     public async Task MultipleClientsFromFirstTagAndOperationName(JsonLibrary jsonLibrary, ClassStyle classStyle)
     {
         MapGet("CustomResponseAndRequest", "/First", "first", static ([FromBody] CustomRequest request) => new CustomResponse(request.Foo, request.Bar));
@@ -22,7 +22,7 @@ public class CustomResponseBody : BaseDriverApiTest
     }
 
     [Theory]
-    [MemberData(nameof(EnumInlineData.Data), MemberType = typeof(EnumInlineData))]
+    [MemberData(nameof(EnumInlineData.Instance), MemberType = typeof(EnumInlineData))]
     public async Task SingleClientFromOperationIdOperationName(JsonLibrary jsonLibrary, ClassStyle classStyle)
     {
         MapGet("CustomResponseAndRequest", "/First", "first", static ([FromBody] CustomRequest request) => new CustomResponse(request.Foo, request.Bar));

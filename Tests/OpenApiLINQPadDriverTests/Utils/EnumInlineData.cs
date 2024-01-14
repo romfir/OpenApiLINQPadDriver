@@ -1,16 +1,15 @@
 ﻿namespace OpenApiLINQPadDriverTests.Utils;
-internal static class EnumInlineData
+internal class EnumInlineData : TheoryData<JsonLibrary, ClassStyle>
 {
-    public static IEnumerable<object[]> Data
+    public static EnumInlineData Instance = new();
+
+    private EnumInlineData()
     {
-        get
+        foreach (var jsonLibrary in Enum.GetValues<JsonLibrary>())
         {
-            foreach (var jsonLibrary in Enum.GetValues<JsonLibrary>())
+            foreach (var classStyle in Enum.GetValues<ClassStyle>())
             {
-                foreach (var classStyle in Enum.GetValues<ClassStyle>())
-                {
-                    yield return new object[] { jsonLibrary, classStyle };
-                }
+               Add(jsonLibrary, classStyle);
             }
         }
     }

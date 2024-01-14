@@ -2,7 +2,7 @@
 public class AuthTests : BaseDriverApiTest
 {
     [Theory] //todo test both global and local setter
-    [MemberData(nameof(EnumInlineData.Data), MemberType = typeof(EnumInlineData))]
+    [MemberData(nameof(EnumInlineData.Instance), MemberType = typeof(EnumInlineData))]
     public async Task Setting_Headers_In_PrepareRequestFunction_For_MultipleClientsFromFirstTagAndOperationName(JsonLibrary jsonLibrary, ClassStyle classStyle)
     {
         MapGet("Header", "/replay", "Replay", static (HttpContext context) => context.Request.Headers);
@@ -25,7 +25,7 @@ public class AuthTests : BaseDriverApiTest
     }
 
     [Theory] //todo test both global and local setter
-    [MemberData(nameof(EnumInlineData.Data), MemberType = typeof(EnumInlineData))]
+    [MemberData(nameof(EnumInlineData.Instance), MemberType = typeof(EnumInlineData))]
     public async Task Setting_Headers_In_PrepareRequestFunction_For_SingleClientFromOperationIdOperationName(JsonLibrary jsonLibrary, ClassStyle classStyle)
     {
         MapGet("Header", "/replay", "Replay", static (HttpContext context) => context.Request.Headers);

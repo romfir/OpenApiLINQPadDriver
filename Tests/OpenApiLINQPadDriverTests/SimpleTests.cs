@@ -3,7 +3,7 @@ namespace OpenApiLINQPadDriverTests;
 public class SimpleTests : BaseDriverApiTest
 {
     [Theory] //todo test both global and local setter
-    [MemberData(nameof(EnumInlineData.Data), MemberType = typeof(EnumInlineData))]
+    [MemberData(nameof(EnumInlineData.Instance), MemberType = typeof(EnumInlineData))]
     public async Task MultipleClientsFromFirstTagAndOperationName(JsonLibrary jsonLibrary, ClassStyle classStyle)
     {
         MapGet("arithmetic", "/sum", "sum", static (int x, int y) => x + y);
@@ -24,7 +24,7 @@ public class SimpleTests : BaseDriverApiTest
     }
 
     [Theory] //todo test both global and local setter
-    [MemberData(nameof(EnumInlineData.Data), MemberType = typeof(EnumInlineData))]
+    [MemberData(nameof(EnumInlineData.Instance), MemberType = typeof(EnumInlineData))]
     public async Task SingleClientFromOperationIdOperationName(JsonLibrary jsonLibrary, ClassStyle classStyle)
     {
         MapGet("arithmetic", "/sum", "sum", static (int x, int y) => x + y);
@@ -41,7 +41,22 @@ public class SimpleTests : BaseDriverApiTest
             """, EndpointGrouping.SingleClientFromOperationIdOperationName, jsonLibrary, classStyle);
     }
 
-    
+    //[Theory] //todo test both global and local setter
+    //[MemberData(nameof(EnumInlineData.Instance), MemberType = typeof(EnumInlineData))]
+    //public async Task ClientIsGeneratedWithoutServerInDefinition(JsonLibrary jsonLibrary, ClassStyle classStyle)
+    //{
+    //    MapGet("arithmetic", "/sum", "sum", static (int x, int y) => x + y);
+    //    StartApi(removeServerFromApiDefinition: true);
+
+    //    await ExecuteScriptAsync(
+    //        """
+    //        var sum = await this.SumAsync(x: 1, y: 2);
+    //        sum.Should().Be(3, Reason());
+
+    //        """, EndpointGrouping.SingleClientFromOperationIdOperationName, jsonLibrary, classStyle);
+    //}
+
+
 
     //todo some form of physical cache based on swagger.json hash? Write to temp and read it or something
 

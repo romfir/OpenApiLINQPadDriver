@@ -5,7 +5,6 @@ using System.Text;
 using System.Xml.Linq;
 using LINQPad;
 using System.Globalization;
-using FluentAssertions;
 
 namespace OpenApiLINQPadDriverTests.Utils;
 internal sealed class QueryExecutor : IDisposable
@@ -17,7 +16,7 @@ internal sealed class QueryExecutor : IDisposable
     private readonly string _uniqueFileName = Guid.NewGuid().ToString();
     private bool _wasRun;
 
-    public async Task<string> RunAsync(string apiUri, string script, EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle)
+    public async Task<string> RunAsync(string apiUri, string script, EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle, OpenApiFormat openApiFormat)
     {
         //otherwise LINQPad errors are localized
         CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
@@ -27,7 +26,7 @@ internal sealed class QueryExecutor : IDisposable
             throw new InvalidOperationException("Multiple script execution per test is not supported (to support it create list of unique file names and then dispose of them");
         _wasRun = true;
 
-        var queryConfig = GetQueryHeaders(apiUri, script, endpointGrouping, jsonLibrary, classStyle)
+        var queryConfig = GetQueryHeaders(apiUri, script, endpointGrouping, jsonLibrary, classStyle, openApiFormat)
             .Aggregate(new StringBuilder(), static (stringBuilder, header) =>
         {
             stringBuilder.AppendLine(header);
@@ -42,7 +41,9 @@ internal sealed class QueryExecutor : IDisposable
 
         try
         {
-            using var compilation = await Util.CompileAsync(filePath);
+          // await Task.Delay(TimeSpan.FromMinutes(20));
+
+            using var compilation = await Util.CompileAsync(filePath); //, forceRebuild: true, cxName: "OpenApiContextDriver"
             var queryExecuter =  compilation.Run(QueryResultFormat.Html);
             //var exception = await queryExecuter.ExceptionAsync;
             var returnValue = await queryExecuter.ReturnValueAsync;
@@ -58,7 +59,7 @@ internal sealed class QueryExecutor : IDisposable
         }
     }
 
-    private static IEnumerable<string> GetQueryHeaders(string apiUri, string script, EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle)
+    private static IEnumerable<string> GetQueryHeaders(string apiUri, string script, EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle, OpenApiFormat openApiFormat)
     {
         var connectionInfoMock = new Mock<IConnectionInfo>();
 
@@ -67,6 +68,7 @@ internal sealed class QueryExecutor : IDisposable
         connectionInfoMock.Setup(s => s.DriverData).Returns(XDocument.Parse(
             $"""
              <DriverData>
+                <{nameof(OpenApiContextDriverProperties.OpenApiFormat)}>{openApiFormat}</{nameof(OpenApiContextDriverProperties.OpenApiFormat)}>
                 <{nameof(OpenApiContextDriverProperties.OpenApiDocumentUri)}>{swaggerPath}</{nameof(OpenApiContextDriverProperties.OpenApiDocumentUri)}>
                 <{nameof(OpenApiContextDriverProperties.ApiUri)}>{apiUri}</{nameof(OpenApiContextDriverProperties.ApiUri)}>
                 <{nameof(OpenApiContextDriverProperties.EndpointGrouping)}>{endpointGrouping}</{nameof(OpenApiContextDriverProperties.EndpointGrouping)}>
@@ -92,7 +94,7 @@ internal sealed class QueryExecutor : IDisposable
         yield return "}";
         yield return
             "string Reason([CallerLineNumber] int sourceLineNumber = 0) =>" +
-            @" $""something went wrong at line #{sourceLineNumber}"";";
+            """ $"something went wrong at line #{sourceLineNumber}";""";
     }
 
     private string GetFilePath() => Path.Join(TempScriptDirectory, _uniqueFileName + ".linq");
@@ -100,7 +102,7 @@ internal sealed class QueryExecutor : IDisposable
     public void Dispose()
     {
         //#if DEBUG // on CI Github runners are purged after each run so we don't care about leaving these files
-        File.Delete(GetFilePath());
+        //File.Delete(GetFilePath());
         //#endif
     }
 }
