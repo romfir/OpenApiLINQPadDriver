@@ -19,7 +19,7 @@
 
 	<PropertyGroup>
 		<AssemblyName>OpenApiLINQPadDriver</AssemblyName>
-		<Version>0.0.5-alpha</Version>
+		<Version>0.0.6-alpha</Version>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<Authors>Damian Romanowski (romfir22@gmail.com)</Authors>
 		<Copyright>Copyright © Damian Romanowski 2023-$([System.DateTime]::Now.Year)</Copyright>
@@ -62,14 +62,13 @@
 
 	<ItemGroup>
 		<PackageReference Include="LINQPad.Reference" Version="1.3.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-		<PackageReference Include="NJsonSchema" Version="10.9.0" />
-		<PackageReference Include="NJsonSchema.CodeGeneration" Version="10.9.0" />
-		<PackageReference Include="NJsonSchema.CodeGeneration.CSharp" Version="10.9.0" />
-		<PackageReference Include="NSwag.CodeGeneration" Version="13.20.0" />
-		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.20.0" />
-		<PackageReference Include="NSwag.Core" Version="13.20.0" />
-		<PackageReference Include="NSwag.Core.Yaml" Version="13.20.0" />
+		<PackageReference Include="NJsonSchema" Version="11.0.0" />
+		<PackageReference Include="NJsonSchema.CodeGeneration" Version="11.0.0" />
+		<PackageReference Include="NJsonSchema.CodeGeneration.CSharp" Version="11.0.0" />
+		<PackageReference Include="NSwag.CodeGeneration" Version="14.0.1" />
+		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="14.0.1" />
+		<PackageReference Include="NSwag.Core" Version="14.0.1" />
+		<PackageReference Include="NSwag.Core.Yaml" Version="14.0.1" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.8.0" />
 		<PackageReference Include="Prism.Core" Version="8.1.97" />
 	</ItemGroup>

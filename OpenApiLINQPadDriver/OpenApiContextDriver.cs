@@ -52,13 +52,13 @@ public class OpenApiContextDriver : DynamicDataContextDriver
         => SchemaBuilder.GetSchemaAndBuildAssembly(new OpenApiContextDriverProperties(cxInfo), assemblyToBuild, ref nameSpace, ref typeName);
 
     public override ParameterDescriptor[] GetContextConstructorParameters(IConnectionInfo cxInfo)
-        => new[]
-        {
+        =>
+        [
             ParameterDescriptors.HttpClient
-        };
+        ];
 
     public override object[] GetContextConstructorArguments(IConnectionInfo cxInfo)
-        => new object[] { new HttpClient() };
+        => [new HttpClient()];
 
     public override void InitializeContext(IConnectionInfo cxInfo, object context, QueryExecutionManager executionManager)
     {

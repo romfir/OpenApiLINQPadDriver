@@ -38,7 +38,8 @@ internal static class SchemaBuilder
 
         var endpointGrouping = driverProperties.EndpointGrouping;
         var classStyle = driverProperties.ClassStyle;
-        var settings = CreateCsharpClientGeneratorSettings(endpointGrouping, driverProperties.JsonLibrary, classStyle, driverProperties.GenerateSyncMethods, mainContextType);
+        var jsonLibrary = driverProperties.JsonLibrary;
+        var settings = CreateCsharpClientGeneratorSettings(endpointGrouping, jsonLibrary, classStyle, driverProperties.GenerateSyncMethods, mainContextType);
 
         var generator = new CSharpClientGenerator(document, settings);
 
@@ -56,7 +57,7 @@ internal static class SchemaBuilder
         MeasureTimeAndAddTimeExecutionExplorerItem("Generating clients partials");
 
         var references = driverProperties.GetCoreFxReferenceAssemblies()
-            .Append(typeof(JsonConvert).Assembly.Location) //required for code generation, otherwise NSwag will use the lowest possible version 10.0.1
+            .AppendIf(jsonLibrary == JsonLibrary.NewtonsoftJson, typeof(JsonConvert).Assembly.Location)
             .AppendIf(classStyle == ClassStyle.Prism, typeof(Prism.IActiveAware).Assembly.Location)
             .ToArray();
 
