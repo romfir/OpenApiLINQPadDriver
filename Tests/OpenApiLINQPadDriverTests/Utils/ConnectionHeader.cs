@@ -23,6 +23,7 @@ internal static class ConnectionHeader
              </DriverData>
            </Connection>
            <NuGetReference>FluentAssertions</NuGetReference>
+           <NuGetReference>Prism.Core</NuGetReference>
          {string.Join(Environment.NewLine, AdditionalNamespaces.Concat(additionalNamespaces).Select(additionalNamespace => $"  <Namespace>{additionalNamespace}</Namespace>"))}
          </Query>
          """;
