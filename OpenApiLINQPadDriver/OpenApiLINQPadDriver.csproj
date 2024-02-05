@@ -19,7 +19,7 @@
 
 	<PropertyGroup>
 		<AssemblyName>OpenApiLINQPadDriver</AssemblyName>
-		<Version>0.0.6-alpha</Version>
+		<Version>0.0.7-alpha</Version>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<Authors>Damian Romanowski (romfir22@gmail.com)</Authors>
 		<Copyright>Copyright © Damian Romanowski 2023-$([System.DateTime]::Now.Year)</Copyright>
