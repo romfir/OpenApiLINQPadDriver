@@ -28,6 +28,12 @@
 		<Description>$(AssemblyTitle).</Description>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>OpenApiLINQPadDriverTests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
 	<PropertyGroup>
 		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>

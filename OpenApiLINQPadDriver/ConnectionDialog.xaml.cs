@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
@@ -109,7 +108,7 @@ internal partial class ConnectionDialog
         {
             var document = await OpenApiDocumentHelper.GetFromUriAsync(new Uri(properties.OpenApiDocumentUri!), properties.OpenApiFormat).ConfigureAwait(false);
 
-            var firstServerOrNull = document.Servers.FirstOrDefault();
+            var firstServerOrNull = document.Servers?.FirstOrDefault();
             if (firstServerOrNull != null)
             {
                 properties.ApiUri = firstServerOrNull.Url;
@@ -118,7 +117,7 @@ internal partial class ConnectionDialog
             }
             else
             {
-                MessageBox.Show("This Open API documentation does not contain server address, please input it manually", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("This Open API documentation does not contain any server address, please input it manually", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
         catch (Exception ex)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using LINQPad.Extensibility.DataContext;
@@ -49,6 +50,7 @@ internal static class SchemaBuilder
 
         MeasureTimeAndAddTimeExecutionExplorerItem("Generating NSwag classes");
 
+        //possibly this switch should be an if based on SupportsMultipleClients?
         var clientSourceCode = endpointGrouping switch
         {
             EndpointGrouping.SingleClientFromOperationIdOperationName => ClientGenerator.SingleClientFromOperationIdOperationNameGenerator(mainContextType),
@@ -130,6 +132,7 @@ internal static class SchemaBuilder
             var elapsed = stopWatch.Elapsed;
             stopWatch.Restart();
 #endif
+           // File.AppendAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "log.txt"), name + " " + elapsed + Environment.NewLine);
             timeExplorerItem.Children.Add(ExplorerItemHelper.CreateForElapsedTime(name, elapsed));
         }
     }
@@ -139,8 +142,11 @@ internal static class SchemaBuilder
     {
         var (operationNameGenerator, className) = endpointGrouping switch
         {
-            EndpointGrouping.MultipleClientsFromFirstTagAndOperationName => ((IOperationNameGenerator)new MultipleClientsFromFirstTagAndOperationNameGenerator(), "{controller}" + ClientPostFix),
-            EndpointGrouping.SingleClientFromOperationIdOperationName => (new SingleClientFromOperationIdOperationNameGenerator(), type.Name),
+            EndpointGrouping.MultipleClientsFromFirstTagAndOperationName
+                => ((IOperationNameGenerator)new MultipleClientsFromFirstTagAndOperationNameGenerator(), "{controller}" + ClientPostFix),
+
+            EndpointGrouping.SingleClientFromOperationIdOperationName
+                => (new SingleClientFromOperationIdOperationNameGenerator(), type.Name),
             _ => throw new InvalidOperationException()
         };
 
