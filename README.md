@@ -125,9 +125,6 @@ private void PrepareRequest(HttpClient httpClient, HttpRequestMessage requestMes
   requestMessage.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "<token>");
 }
 ```
-### Known Issues ###
-* Code does not compile when there are parameters with the same name, but with case differences in the single endpoint and they come from different locations eg `[FromQuery] int test, [FromHeader] int Test` [related issue](https://github.com/RicoSuter/NSwag/issues/2560)
-
 ## Credits ##
 
 ### Tools ###
