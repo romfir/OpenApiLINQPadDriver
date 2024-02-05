@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using LINQPad.Extensibility.DataContext;
+using Microsoft.CodeAnalysis.CSharp;
 using Newtonsoft.Json;
+using NJsonSchema;
 using NJsonSchema.CodeGeneration.CSharp;
 using NSwag.CodeGeneration.CSharp;
 using NSwag.CodeGeneration.OperationNameGenerators;
@@ -69,9 +71,7 @@ internal static class SchemaBuilder
             FilePathsToReference = references,
             OutputPath = assemblyPath,
             SourceCode = [codeGeneratedByNSwag, clientSourceCode]
-        }, driverProperties.BuildInRelease);
-
-        MeasureTimeAndAddTimeExecutionExplorerItem("Compiling code");
+        }, driverProperties.BuildInRelease, MeasureTimeAndAddTimeExecutionExplorerItem);
 
         var explorerItems = new List<ExplorerItem>();
 
@@ -134,7 +134,7 @@ internal static class SchemaBuilder
         }
     }
 
-    private static CSharpClientGeneratorSettings CreateCsharpClientGeneratorSettings(EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle, bool generateSyncMethods,
+    private static CustomCSharpClientGeneratorSettings CreateCsharpClientGeneratorSettings(EndpointGrouping endpointGrouping, JsonLibrary jsonLibrary, ClassStyle classStyle, bool generateSyncMethods,
         TypeDescriptor type)
     {
         var (operationNameGenerator, className) = endpointGrouping switch
@@ -144,7 +144,7 @@ internal static class SchemaBuilder
             _ => throw new InvalidOperationException()
         };
 
-        var settings = new CSharpClientGeneratorSettings
+        var settings = new CustomCSharpClientGeneratorSettings
         {
             GenerateClientClasses = true,
             GenerateOptionalParameters = true,
@@ -159,8 +159,38 @@ internal static class SchemaBuilder
             UseHttpClientCreationMethod = false,
             DisposeHttpClient = true,
             GenerateSyncMethods = generateSyncMethods,
-            GeneratePrepareRequestAndProcessResponseAsAsyncMethods = false,
+            GeneratePrepareRequestAndProcessResponseAsAsyncMethods = false
         };
         return settings;
+    }
+
+    private sealed class CustomCSharpClientGeneratorSettings : CSharpClientGeneratorSettings
+    {
+        public override string GenerateControllerName(string controllerName)
+        {
+            var convertedToUpperCaseUsingNSwagLib = ConversionUtilities.ConvertToUpperCamelCase(controllerName, false);
+            var escapedToBeValidIdentifier = EscapeCSharpIdentifier(convertedToUpperCaseUsingNSwagLib);
+            return ClassName.Replace("{controller}", escapedToBeValidIdentifier);
+        }
+
+        //https://github.com/icsharpcode/CodeConverter/blob/3284c3d228040fc4d0ea9c5a05129b1b2c0fc858/CodeConverter/CSharp/CommonConversions.cs#L342
+        private static string EscapeCSharpIdentifier(string text)
+        {
+            if(string.IsNullOrEmpty(text))
+                return text;
+
+            if (!SyntaxFacts.IsValidIdentifier(text))
+            {
+                text = new string(text.Where(SyntaxFacts.IsIdentifierPartCharacter).ToArray());
+                if (!SyntaxFacts.IsIdentifierStartCharacter(text[0]))
+                    text = "a" + text;
+            }
+
+            //not needed because we concat this name with 'Client' postfix, but if we end up ditching it, it may be useful
+            if (SyntaxFacts.GetKeywordKind(text) != SyntaxKind.None || SyntaxFacts.GetContextualKeywordKind(text) != SyntaxKind.None)
+                text = "@" + text;
+
+            return text;
+        }
     }
 }
