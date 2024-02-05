@@ -65,4 +65,9 @@ public class SimpleTests : BaseDriverApiTest
     //todo defaults props are set (for both modes)
 
     //todo test with a lot of endpoints/clients
+
+    //todo yml tests
+
+    //https://github.com/romfir/OpenApiLINQPadDriver/issues/25
+    //todo weird client names with dots/dashes/etc. (#25)
 }
