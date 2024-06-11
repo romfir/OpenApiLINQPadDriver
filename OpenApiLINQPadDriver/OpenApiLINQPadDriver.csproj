@@ -69,7 +69,7 @@
 		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="14.0.7" />
 		<PackageReference Include="NSwag.Core" Version="14.0.7" />
 		<PackageReference Include="NSwag.Core.Yaml" Version="14.0.7" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.10.0" />
 		<PackageReference Include="Prism.Core" Version="8.1.97" />
 	</ItemGroup>
 
