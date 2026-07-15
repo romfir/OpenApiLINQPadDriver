@@ -91,7 +91,7 @@
     </Window.Resources>
 
     <StackPanel Margin="12">
-        
+
         <DockPanel>
             <WrapPanel Margin="0 0 0 2" Orientation="Horizontal" HorizontalAlignment="Stretch">
                 <Label Padding="0,0,0,2" Content="_Open Api/Swagger Uri: " Target="{Binding ElementName=OpenApiDocumentUri}"/>
@@ -102,7 +102,7 @@
                           ItemsSource="{Binding Source={StaticResource OpenApiFormatData}}"/>
                 <TextBlock Style="{StaticResource WrappedTextBlock}">
                     <TextBlock Style="{StaticResource TextBlockHyperlinkContainer}">
-                        <Hyperlink Name="GetOpenApiJsonHyperlink"
+                        <Hyperlink
                                    Style="{StaticResource StyledHyperlink}" 
                                    TextDecorations="None"
                                    Click="GetOpenApiJsonHyperlink_OnClick"
@@ -121,8 +121,7 @@
                 <Label Padding="0,0,0,2" Content="_API Uri: " Target="{Binding ElementName=ApiUri}"/>
                 <TextBlock Style="{StaticResource WrappedTextBlock}">
                     <TextBlock Style="{StaticResource TextBlockHyperlinkContainer}">
-                        <Hyperlink Name="DownloadApiUriHyperlink"
-                                   Style="{StaticResource StyledHyperlink}" 
+                        <Hyperlink Style="{StaticResource StyledHyperlink}" 
                                    TextDecorations="None"
                                    Click="DownloadApiUriHyperlink_OnClick" 
                                    IsEnabled ="{Binding IsOpenApiDocumentUriValid, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
@@ -208,7 +207,7 @@
             </Grid>
 
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Name="OkButton" Content="OK" Margin="1 0 0 0" Style="{StaticResource CloseDialogButtonStyle}" IsDefault="True" Click="BtnOK_OnClick" IsEnabled="{Binding HasNoErrors}"/>
+                <Button Content="Ok" Margin="1 0 0 0" Style="{StaticResource CloseDialogButtonStyle}" IsDefault="True" Click="BtnOK_OnClick" IsEnabled="{Binding HasNoErrors}"/>
                 <Button Content="Cancel" Style="{StaticResource CloseDialogButtonStyle}" IsCancel="True"/>
             </StackPanel>
         </Grid>

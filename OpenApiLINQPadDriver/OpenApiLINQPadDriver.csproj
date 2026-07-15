@@ -19,9 +19,9 @@
 
 	<PropertyGroup>
 		<AssemblyName>OpenApiLINQPadDriver</AssemblyName>
-		<Version>0.0.9-alpha</Version>
+		<Version>0.0.10-alpha</Version>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<Authors>Damian Romanowski (romfir22@gmail.com)</Authors>
+		<Authors>Damian Romanowski (github@romfir.email)</Authors>
 		<Copyright>Copyright © Damian Romanowski 2023-$([System.DateTime]::Now.Year)</Copyright>
 		<ApplicationIcon>OpenAPI.ico</ApplicationIcon>
 		<AssemblyTitle>LINQPad 7/8/9 Open API Driver</AssemblyTitle>
@@ -69,12 +69,12 @@
 		<PackageReference Include="NSwag.CodeGeneration.CSharp" Version="14.7.1" />
 		<PackageReference Include="NSwag.Core" Version="14.7.1" />
 		<PackageReference Include="NSwag.Core.Yaml" Version="14.7.1" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.3.0" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.6.0" />
 		<PackageReference Include="Prism.Core" Version="9.0.537" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.203" PrivateAssets="All" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301" PrivateAssets="All" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -101,6 +101,10 @@
 			<Pack>true</Pack>
 			<PackagePath />
 		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<AssemblyMetadata Include="Authors" Value="$(Authors)" />
 	</ItemGroup>
 
 </Project>
