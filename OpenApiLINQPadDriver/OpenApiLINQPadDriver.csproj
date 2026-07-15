@@ -14,7 +14,7 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' != 'Debug_Publish_To_LINQPad_Folder'">
-		<TargetFrameworks>net6.0-windows;net8.0-windows;net10.0-windows</TargetFrameworks>
+		<TargetFrameworks>net8.0-windows;net10.0-windows</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -79,13 +79,13 @@
 
 	<ItemGroup>
 		<Content Include="FailedConnection.png">
-			<PackagePath>lib\net6.0-windows7.0;lib\net8.0-windows7.0;lib\net10.0-windows7.0</PackagePath>
+			<PackagePath>lib\net8.0-windows7.0;lib\net10.0-windows7.0</PackagePath>
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <PackageCopyToOutput>true</PackageCopyToOutput>
 		  <Pack>True</Pack>
 		</Content>
 		<Content Include="Connection.png">
-			<PackagePath>lib\net6.0-windows7.0;lib\net8.0-windows7.0;lib\net10.0-windows7.0</PackagePath>
+			<PackagePath>lib\net8.0-windows7.0;lib\net10.0-windows7.0</PackagePath>
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		  <PackageCopyToOutput>true</PackageCopyToOutput>
 		  <Pack>True</Pack>
