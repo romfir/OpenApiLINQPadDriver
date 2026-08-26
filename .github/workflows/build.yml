@@ -16,7 +16,7 @@ permissions:
 env:
   PACKAGE_NAME: OpenApiLINQPadDriver
   PROJECT: OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj
-  SLN: OpenApiLINQPadDriver.sln
+  SLNX: OpenApiLINQPadDriver.slnx
   CONFIGURATION: Release
   RETENTION_DAYS: 1
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
@@ -41,11 +41,11 @@ jobs:
           cache-dependency-path: ${{ env.PACKAGE_NAME }}/packages.lock.json
 
       - name: Restore
-        run: dotnet restore "${{ env.SLN }}" --locked-mode
+        run: dotnet restore "${{ env.SLNX }}" --locked-mode
 
       - name: Build
         run: >
-          dotnet build "${{ env.SLN }}"
+          dotnet build "${{ env.SLNX }}"
           --configuration "${{ env.CONFIGURATION }}"
           --no-restore
           -p:GITHUB_ACTIONS=true
