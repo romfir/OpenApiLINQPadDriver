@@ -1,0 +1,8 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Debug_Publish_To_LINQPad_Folder" />
+    <BuildType Name="Release" />
+  </Configurations>
+  <Project Path="OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj" />
+</Solution>
