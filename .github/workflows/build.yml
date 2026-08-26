@@ -10,68 +10,144 @@ on:
     types:
       - published
 
+permissions:
+  contents: read
+
 env:
   PACKAGE_NAME: OpenApiLINQPadDriver
-  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  DOTNET_NOLOGO: 1
+  PROJECT: OpenApiLINQPadDriver/OpenApiLINQPadDriver.csproj
   SLN: OpenApiLINQPadDriver.sln
   CONFIGURATION: Release
   RETENTION_DAYS: 1
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
   NUGET_OUTPUT_DIRECTORY: ${{ github.workspace }}/nuget
+
+  DOTNET_NOLOGO: 1
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v6
-    
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          cache: true
+          cache-dependency-path: ${{ env.PACKAGE_NAME }}/packages.lock.json
 
-    - name : Restore Cache
-      id: cache
-      uses: actions/cache@v5
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-            ${{ runner.os }}-nuget-
+      - name: Restore
+        run: dotnet restore "${{ env.SLN }}" --locked-mode
 
-    - name: Restore dependencies
-      run: dotnet restore ${{ env.SLN }} --locked-mode
+      - name: Build
+        run: >
+          dotnet build "${{ env.SLN }}"
+          --configuration "${{ env.CONFIGURATION }}"
+          --no-restore
+          -p:GITHUB_ACTIONS=true
 
-    - name: ${{ env.SLN }} ${{ env.CONFIGURATION }} Build
-      run: dotnet build ${{ env.SLN }} --no-restore --configuration ${{ env.CONFIGURATION }} -p:GITHUB_ACTIONS=true
-
-    - name: Publish Artifacts
-      uses: actions/upload-artifact@v7
-      with:
-        name: ${{ env.PACKAGE_NAME }}
-        if-no-files-found: error
-        path: |
-          ${{ env.PACKAGE_NAME }}/bin/${{ env.CONFIGURATION }}/${{ env.PACKAGE_NAME }}.*.*nupkg
-        retention-days: ${{ env.RETENTION_DAYS }}
+      - name: Upload NuGet packages
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ env.PACKAGE_NAME }}
+          if-no-files-found: error
+          retention-days: ${{ env.RETENTION_DAYS }}
+          path: |
+            ${{ env.PACKAGE_NAME }}/bin/${{ env.CONFIGURATION }}/*.nupkg
+            ${{ env.PACKAGE_NAME }}/bin/${{ env.CONFIGURATION }}/*.snupkg
 
   deploy:
+    name: Publish to NuGet
     if: github.event_name == 'release'
+    needs:
+      - build
+
     runs-on: ubuntu-latest
-    needs: [ build ]
+    environment: nuget
+    permissions:
+      contents: read
+      id-token: write
+
+    concurrency:
+      group: nuget-${{ github.event.release.tag_name }}
+      cancel-in-progress: false
+
     steps:
-      - uses: actions/download-artifact@v8
+      - name: Checkout release tag
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+
+      - name: Download NuGet packages
+        uses: actions/download-artifact@v8
         with:
           name: ${{ env.PACKAGE_NAME }}
           path: ${{ env.NUGET_OUTPUT_DIRECTORY }}
 
-      - name: Setup .NET Core
-        uses: actions/setup-dotnet@v5
+      - name: Validate release version
+        id: package
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+
+          # GitHub release:
+          #   v0.0.10-alpha
+          #
+          # NuGet/MSBuild version:
+          #   0.0.10-alpha
+          release_version="${RELEASE_TAG#v}"
+
+          project_version="$(
+            dotnet msbuild "${{ env.PROJECT }}" \
+              -nologo \
+              -getProperty:Version |
+            tail -n 1 |
+            tr -d '\r'
+          )"
+
+          echo "Release version: $release_version"
+          echo "Project version: $project_version"
+
+          if [[ "$release_version" != "$project_version" ]]; then
+            echo "::error::Release tag '$RELEASE_TAG' does not match project version '$project_version'."
+            exit 1
+          fi
+
+          package_file="${{ env.NUGET_OUTPUT_DIRECTORY }}/${{ env.PACKAGE_NAME }}.${release_version}.nupkg"
+
+          if [[ ! -f "$package_file" ]]; then
+            echo "::error::Expected NuGet package was not found: $package_file"
+            echo "Downloaded files:"
+            find "${{ env.NUGET_OUTPUT_DIRECTORY }}" -maxdepth 2 -type f -print
+            exit 1
+          fi
+
+          echo "package_file=$package_file" >> "$GITHUB_OUTPUT"
+
+      - name: NuGet login
+        id: nuget-login
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
 
       - name: Publish NuGet package
+        shell: bash
+        env:
+          PACKAGE_FILE: ${{ steps.package.outputs.package_file }}
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
         run: |
-          for packageFile in "${{ env.NUGET_OUTPUT_DIRECTORY }}"/"${{ env.PACKAGE_NAME }}"*.nupkg
-          do
-            if [ -f "$packageFile" ]; then
-              dotnet nuget push "$packageFile" --api-key "${{ secrets.NUGET_APIKEY }}" --source https://api.nuget.org/v3/index.json --skip-duplicate
-            fi
-          done
+          set -euo pipefail
+
+          dotnet nuget push "$PACKAGE_FILE" \
+            --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json \
+            --skip-duplicate
