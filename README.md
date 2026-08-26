@@ -1,4 +1,4 @@
-# OpenApiLINQPadDriver for LINQPad 7/8
+# OpenApiLINQPadDriver for LINQPad 8/9
 [![Latest build](https://github.com/romfir/OpenApiLINQPadDriver/workflows/Build/badge.svg)](https://github.com/romfir/OpenApiLINQPadDriver/actions)
 [![NuGet](https://img.shields.io/nuget/v/OpenApiLINQPadDriver)](https://www.nuget.org/packages/OpenApiLINQPadDriver)
 [![Downloads](https://img.shields.io/nuget/dt/OpenApiLINQPadDriver)](https://www.nuget.org/packages/OpenApiLINQPadDriver)
@@ -6,7 +6,7 @@
 
 ## Description
 
-OpenApiLINQPadDriver is LINQPad 7/8/9 dynamic data context driver for creating C# clients based on [Open API](https://www.openapis.org)/[Swagger](https://swagger.io/specification/) specifications
+OpenApiLINQPadDriver is LINQPad 8/9 dynamic data context driver for creating C# clients based on [Open API](https://www.openapis.org)/[Swagger](https://swagger.io/specification/) specifications
 
 * Specification is read using [NJsonSchema](https://github.com/RicoSuter/NJsonSchema) and clients are generated using [NSwag](https://github.com/RicoSuter/NSwag)
 
@@ -23,11 +23,10 @@ generation of lpx6 files is on the roadmap, for now we only support instalation 
 
 * [LINQPad 9](https://www.linqpad.net/LINQPad9.aspx)
 * [LINQPad 8](https://www.linqpad.net/LINQPad8.aspx)
-* [LINQPad 7](https://www.linqpad.net/LINQPad7.aspx)
 
 ## Installation
 
-### LINQPad 7/8
+### LINQPad 8/9
 
 #### NuGet
 
@@ -192,7 +191,6 @@ async Task Main()
 
 ### Tools
 
-* [LINQPad 7](https://www.linqpad.net/LINQPad7.aspx)
 * [LINQPad 8](https://www.linqpad.net/LINQPad8.aspx)
 * [LINQPad 9](https://www.linqpad.net/LINQPad9.aspx)
 * [LINQPad Command-Line and Scripting (LPRun)](https://www.linqpad.net/lprun.aspx)
