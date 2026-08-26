@@ -19,12 +19,12 @@
 
 	<PropertyGroup>
 		<AssemblyName>OpenApiLINQPadDriver</AssemblyName>
-		<Version>0.0.11-alpha</Version>
+		<Version>0.0.12-alpha</Version>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<Authors>Damian Romanowski (github@romfir.email)</Authors>
 		<Copyright>Copyright © Damian Romanowski 2023-$([System.DateTime]::Now.Year)</Copyright>
 		<ApplicationIcon>OpenAPI.ico</ApplicationIcon>
-		<AssemblyTitle>LINQPad 7/8/9 Open API Driver</AssemblyTitle>
+		<AssemblyTitle>LINQPad 8/9 Open API Driver</AssemblyTitle>
 		<Description>$(AssemblyTitle).</Description>
 	</PropertyGroup>
 
