@@ -1,5 +1,5 @@
 # OpenApiLINQPadDriver for LINQPad 8/9
-[![Latest build](https://github.com/romfir/OpenApiLINQPadDriver/workflows/Build/badge.svg)](https://github.com/romfir/OpenApiLINQPadDriver/actions)
+[![Build](https://github.com/romfir/OpenApiLINQPadDriver/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/romfir/OpenApiLINQPadDriver/actions/workflows/build.yml)
 [![NuGet](https://img.shields.io/nuget/v/OpenApiLINQPadDriver)](https://www.nuget.org/packages/OpenApiLINQPadDriver)
 [![Downloads](https://img.shields.io/nuget/dt/OpenApiLINQPadDriver)](https://www.nuget.org/packages/OpenApiLINQPadDriver)
 [![License](https://img.shields.io/badge/license-MIT-yellow)](https://opensource.org/licenses/MIT)
